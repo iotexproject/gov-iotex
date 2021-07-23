@@ -27,6 +27,12 @@ watch(modalOpen, val => {
   const el = document.body;
   el.classList[val ? 'add' : 'remove']('overflow-hidden');
 });
+
+watch(space, value => {
+  if (value.skin) {
+    import(`@snapshot-labs/snapshot-spaces/skins/${value.skin}.scss`);
+  }
+});
 </script>
 
 <template>

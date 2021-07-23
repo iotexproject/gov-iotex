@@ -11,7 +11,6 @@ import store from '@/store';
 import mixins from '@/mixins';
 import i18n from '@/helpers/i18n';
 import '@/helpers/auth';
-import '@/helpers/skins';
 import '@/style.scss';
 import { apolloClient } from '@/helpers/apollo';
 import { DefaultApolloClient } from '@vue/apollo-composable';

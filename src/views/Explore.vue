@@ -25,8 +25,19 @@ const resultsStr = computed(() => {
   return t('explore.results');
 });
 
-const { filteredSkins, filteredStrategies, filteredNetworks, filteredPlugins } =
-  useSearchFilters();
+const {
+  filteredSkins,
+  filteredStrategies,
+  filteredNetworks,
+  filteredPlugins,
+  minifiedSkinsArray
+} = useSearchFilters();
+
+if (route.name === 'skins') {
+  minifiedSkinsArray.value.forEach(skin => {
+    import(`@snapshot-labs/snapshot-spaces/skins/${skin.key}.scss`);
+  });
+}
 
 const items = computed(() => {
   const q = route.query.q || '';

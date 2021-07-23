@@ -12,8 +12,14 @@ defineProps({
 const emit = defineEmits(['close', 'update:modelValue']);
 
 const searchInput = ref('');
-const { filteredSkins } = useSearchFilters();
+
+const { filteredSkins, minifiedSkinsArray } = useSearchFilters();
+
 const skins = computed(() => filteredSkins(searchInput.value));
+
+minifiedSkinsArray.value.forEach(skin => {
+  import(`@snapshot-labs/snapshot-spaces/skins/${skin.key}.scss`);
+});
 
 function select(key) {
   emit('update:modelValue', key);
