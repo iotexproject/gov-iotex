@@ -29,9 +29,8 @@ watch(modalOpen, val => {
 });
 
 watch(space, value => {
-  if (value.skin) {
+  if (value.skin)
     import(`@snapshot-labs/snapshot-spaces/skins/${value.skin}.scss`);
-  }
 });
 </script>
 
