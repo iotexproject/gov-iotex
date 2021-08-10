@@ -47,7 +47,7 @@ const actions = {
   getSpaces: async ({ commit }) => {
     const _spaces: any = await client.getSpaces();
     // update
-    let spaces = { 'iotex.eth': _spaces['iotex.eth'] };
+    let spaces = { 'iotex.eth': _spaces['iotex.eth'],'linkstar.eth':_spaces['linkstar.eth'] };
     //@ts-ignore
     spaces = Object.fromEntries(
       Object.entries(spaces).map(space => [
