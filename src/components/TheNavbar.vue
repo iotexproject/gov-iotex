@@ -75,10 +75,12 @@ watchEffect(() => {
           <div class="flex-auto d-flex flex-items-center">
             <p
               class="d-inline-block d-flex flex-items-center"
-              style="color: black; line-height: 20px"
+              style="line-height: 20px"
               :style="titleStyle"
             >
-              IoTeX Governance Portal<br />
+              <a href="/">
+                IoTeX Governance Portal
+              </a><br />
               <span style="color: gray; font-size: 1.125rem">
                 powered by
                 <a
