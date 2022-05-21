@@ -65,13 +65,6 @@ watchEffect(() => {
               size="20"
             />
           </UiSidebarButton>
-          <!-- <router-link
-            :to="{ path: '/' }"
-            class="flex items-center sm:-ml-3"
-            style="font-size: 24px"
-          >
-            snapshot
-          </router-link> -->
           <div class="flex-auto d-flex flex-items-center">
             <p
               class="d-inline-block d-flex flex-items-center"
@@ -80,7 +73,8 @@ watchEffect(() => {
             >
               <a href="/">
                 IoTeX Governance Portal
-              </a><br />
+              </a>
+              <br />
               <span style="color: gray; font-size: 1.125rem">
                 powered by
                 <a
