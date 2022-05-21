@@ -87,8 +87,8 @@ async function loadProposal() {
   ) {
     router.push({ name: 'error-404' });
   }
-  if (proposalObj.proposal?.id==="QmdSq7Fj7s1QaLVgNnJ2V8WxAHCXDry1kqSSSYDD4wpHea"&&proposalObj.proposal?.strategies[0]?.params?.symbol === 'DAI') {
-    proposalObj.proposal.strategies[0].params.symbol='IOTX'
+  if (proposal?.id==="QmdSq7Fj7s1QaLVgNnJ2V8WxAHCXDry1kqSSSYDD4wpHea"&&proposal?.strategies[0]?.params?.symbol === 'DAI') {
+    proposal.strategies[0].params.symbol='IOTX'
   }
   loadingProposal.value = false;
   loadResults();
