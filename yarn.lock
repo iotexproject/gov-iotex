@@ -237,7 +237,7 @@
     "@ethersproject/logger" "^5.7.0"
     "@ethersproject/properties" "^5.7.0"
 
-"@ethersproject/address@5.7.0", "@ethersproject/address@^5.7.0":
+"@ethersproject/address@5.7.0", "@ethersproject/address@^5.6.1", "@ethersproject/address@^5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/address/-/address-5.7.0.tgz#19b56c4d74a3b0a46bfdbb6cfcc0a153fc697f37"
   integrity sha512-9wYhYt7aghVGo758POM5nqcOMaE168Q6aRLJZwUmiqSrAungkG74gSSeKEIR7ukixesdRZGPgVqme6vmxs1fkA==
@@ -578,10 +578,10 @@
   dependencies:
     "@floating-ui/core" "^1.0.0"
 
-"@gnosis.pm/safe-apps-provider@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-provider/-/safe-apps-provider-0.13.2.tgz#b4963c51e2ae5e86198c7ca42248ab4d97355919"
-  integrity sha512-n/sd6Nq7Kg1ZRSB4zMy7lFV+5R5ZXFKd2ZtvIq0cBvkTM9K2sDNhqTE1Em2uy0hM5wKdWlTfJtwh6YkWVhoXDg==
+"@gnosis.pm/safe-apps-provider@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-provider/-/safe-apps-provider-0.14.0.tgz#52783800f1da5f1b633a42dcf8c8797e7fe31d99"
+  integrity sha512-qOkPUfIu9dLoy4Muo40xzswqix7ZoJDmtEl35D+oYYa6JDw8cr4tVkPPjl6eDPNtMLiqGjs1POzHdZrfC8aHVw==
   dependencies:
     "@gnosis.pm/safe-apps-sdk" "7.8.0"
     events "^3.3.0"
@@ -829,13 +829,13 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@snapshot-labs/lock@^0.1.1011":
-  version "0.1.1011"
-  resolved "https://registry.yarnpkg.com/@snapshot-labs/lock/-/lock-0.1.1011.tgz#5f61fac7eae4e80a656e46ea6792d57b1c0ec61e"
-  integrity sha512-QZ9byU46Oh1/9TRYwlf9wSqkqYgS6P8tzCh7bCWRuwuQmugyL6X65W7DkAtFiycSwrh60EDkNZlDFeG75vSFbA==
+"@snapshot-labs/lock@^0.1.1012":
+  version "0.1.1012"
+  resolved "https://registry.yarnpkg.com/@snapshot-labs/lock/-/lock-0.1.1012.tgz#930a604e3512a765ad7734ecffa8cb5e6e80fc8a"
+  integrity sha512-o1s8RbvPYwJGCy6JfHq5M/gHbjQmV8Va/JHllLe0KHyVLo7f9BKR+TFpY6W9AkGB5BAqes4pvDHyA72ECfmU+A==
   dependencies:
     "@coinbase/wallet-sdk" "^3.4.0"
-    "@gnosis.pm/safe-apps-provider" "^0.13.2"
+    "@gnosis.pm/safe-apps-provider" "^0.14.0"
     "@gnosis.pm/safe-apps-sdk" "^7.8.0"
     "@portis/web3" "^4.0.6"
     "@toruslabs/torus-embed" "^1.12.1"
@@ -849,13 +849,14 @@
   dependencies:
     cross-fetch "^3.1.5"
 
-"@snapshot-labs/snapshot.js@^0.4.35":
-  version "0.4.35"
-  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot.js/-/snapshot.js-0.4.35.tgz#9137f40916f6c4054dee1bd18586dc2a0e9a1eb2"
-  integrity sha512-3AIw536Z7HgeM/7PIwqNKGPffiEL/c0VsYPT+18Z7wEHFgI/UMilhCYcHpZxbnE6AYhlPLowRSFtNwHjwvwRww==
+"@snapshot-labs/snapshot.js@^0.4.58":
+  version "0.4.58"
+  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot.js/-/snapshot.js-0.4.58.tgz#011295a95a3ef0670ef91d89751abf06a5d1d7ea"
+  integrity sha512-dtfeiB0kEtpkQXKtc/MXrCj2cy3/CbbtNKMKudm/aLCTyK3DzYtQyvPLxQ1LwEvFcmf+1w3F6LAPENtmuj9obQ==
   dependencies:
     "@ensdomains/eth-ens-namehash" "^2.0.15"
     "@ethersproject/abi" "^5.6.4"
+    "@ethersproject/address" "^5.6.1"
     "@ethersproject/bytes" "^5.6.1"
     "@ethersproject/contracts" "^5.6.2"
     "@ethersproject/hash" "^5.6.1"
