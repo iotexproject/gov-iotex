@@ -12,9 +12,9 @@ const emit = defineEmits(['next', 'back']);
 
 <template>
   <div v-if="isGnosisSafe" class="space-y-4">
-    <SettingsAdminsBlock context="setup" />
+    <SettingsMembersBlock context="setup" />
 
-    <SettingsAuthorsBlock context="setup" />
+    <SettingsProposalBlock context="setup" />
 
     <SettingsVotingBlock context="setup" />
 
@@ -32,9 +32,7 @@ const emit = defineEmits(['next', 'back']);
     <h4 class="-mb-2 px-4 md:px-0">
       {{ $t('setup.validationTitle') }}
     </h4>
-    <SettingsAdminsBlock context="setup" />
-
-    <SettingsAuthorsBlock context="setup" />
+    <SettingsMembersBlock context="setup" />
   </div>
 
   <div class="px-4 md:px-0">

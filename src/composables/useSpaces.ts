@@ -5,16 +5,30 @@ import networks from '@snapshot-labs/snapshot.js/src/networks.json';
 import verified from '@/../snapshot-spaces/spaces/verified.json';
 import verifiedSpacesCategories from '@/../snapshot-spaces/spaces/categories.json';
 import { mapOldPluginNames } from '@/helpers/utils';
+import { ExploreSpace } from '@/helpers/interfaces';
 
 const spaces: any = ref([]);
 const spacesLoaded = ref(false);
 const selectedCategory = ref('');
 
+export function getRanking(key: string, space): number {
+  let ranking =
+    (space.votes || 0) / 50 +
+    (space.votes_7d || 0) +
+    (space.proposals_7d || 0) * 50 +
+    (space.followers_7d || 0);
+  if (verified[key]) {
+    ranking = ranking * 5;
+    ranking += 100;
+  }
+  return ranking;
+}
+
 export function useSpaces() {
   const route = useRoute();
 
   async function getSpaces() {
-    const exploreObj: any = await fetch(
+    const exploreObj: { spaces: Record<string, ExploreSpace> } = await fetch(
       `${import.meta.env.VITE_HUB_URL}/api/explore`
     ).then(res => res.json());
 
@@ -50,10 +64,7 @@ export function useSpaces() {
     const list = Object.keys(spaces.value)
       .map(key => {
         const followers = spaces.value[key].followers ?? 0;
-        const followers1d = spaces.value[key].followers_1d ?? 0;
-        const isVerified = verified[key] || 0;
-        let score = followers1d + followers / 4;
-        if (isVerified === 1) score = score * 2;
+        const score = getRanking(key, spaces.value[key]);
         const testnet = testnetNetworks.includes(spaces.value[key].network);
         return {
           ...spaces.value[key],

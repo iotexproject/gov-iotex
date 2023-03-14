@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { PROPOSALS_QUERY } from '@/helpers/queries';
 import { ExtendedSpace } from '@/helpers/interfaces';
 import { clone } from '@snapshot-labs/snapshot.js/src/utils';
@@ -12,19 +12,31 @@ import {
   useScrollMonitor,
   useApolloQuery,
   useProfiles,
-  useI18n,
   useWeb3,
-  useApp
+  useMeta
 } from '@/composables';
 
 const props = defineProps<{
   space: ExtendedSpace;
 }>();
 
+useMeta({
+  title: {
+    key: 'metaInfo.space.proposals.title',
+    params: {
+      space: props.space.name
+    }
+  },
+  description: {
+    key: 'metaInfo.space.proposals.description',
+    params: {
+      about: props.space.about.slice(0, 160)
+    }
+  }
+});
+
 const { store, userVotedProposalIds, addSpaceProposals, setSpaceProposals } =
   useProposals();
-const { setPageTitle } = useI18n();
-const { domain } = useApp();
 
 const loading = ref(false);
 
@@ -40,13 +52,10 @@ const subSpaces = computed(
 );
 
 const spaceProposals = computed(() => {
-  if (domain)
-    return clone(store.space.proposals).filter(
-      proposal => proposal.space.id === props.space.id
-    );
-
   return clone(store.space.proposals).filter(proposal =>
-    [props.space.id, ...subSpaces.value].includes(proposal.space.id)
+    [props.space.id.toLowerCase(), ...subSpaces.value].includes(
+      proposal.space.id.toLowerCase()
+    )
   );
 });
 
@@ -100,10 +109,13 @@ watch(spaceProposals, () => {
 
 watch(stateFilter, loadProposals);
 
-onMounted(() => {
-  setPageTitle('page.title.space.proposals', { space: props.space.name });
-  if (spaceProposals.value.length === 0) loadProposals();
-});
+watch(
+  () => props.space.id,
+  () => {
+    loadProposals();
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -151,6 +163,10 @@ onMounted(() => {
             :space="space"
             :voted="userVotedProposalIds.includes(proposal.id)"
             :hide-space-avatar="proposal.space.id === space.id"
+            :to="{
+              name: 'spaceProposal',
+              params: { id: proposal.id, key: proposal.space.id }
+            }"
           />
         </BaseBlock>
       </div>

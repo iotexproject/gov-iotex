@@ -49,15 +49,33 @@ export function useFormValidation(schema, form) {
     )
       return t('errors.invalidAddress');
 
-    if (errorFound?.instancePath.includes('strategies'))
+    if (
+      errorFound?.instancePath.includes('strategies') &&
+      errorFound?.keyword.includes('minItems')
+    )
       return t('errors.minStrategy');
 
     if (
       errorFound?.instancePath.includes('website') ||
       errorFound?.instancePath.includes('terms') ||
-      errorFound?.instancePath.includes('discussion')
+      errorFound?.instancePath.includes('discussion') ||
+      errorFound?.instancePath.includes('guidelines')
     )
       return t('errors.website');
+
+    if (
+      (errorFound?.instancePath.includes('admins') ||
+        errorFound?.instancePath.includes('moderators') ||
+        errorFound?.instancePath.includes('members')) &&
+      errorFound?.keyword.includes('maxItems')
+    )
+      return t('errors.members.maxItems', {
+        limit: errorFound?.params.limit,
+        role:
+          errorFound?.instancePath.replace('/', '') === 'members'
+            ? 'authors'
+            : errorFound?.instancePath.replace('/', '')
+      });
 
     return errorFound
       ? t(`errors.${errorFound.keyword}`, [errorFound?.params.limit])

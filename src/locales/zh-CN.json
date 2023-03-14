@@ -4,9 +4,13 @@
   "createSpace": "创建空间",
   "backToHome": "主页",
   "actions": "操作",
+  "poweredBy": "技术支持",
   "results": "结果",
   "resultsError": "结果无法计算。这通常是由于策略配置错误或者策略中涉及到了无反应的RPC节点。",
-  "vpError": "您的投票权无法计算。这通常是由于策略配置错误或者策略中涉及到了无反应的RPC节点。",
+  "resultsCalculating": "正在计算最终结果。如果您在几分钟后仍然看到这个消息，请联系空间管理员。",
+  "votingPowerFailedMessage": "您的投票权无法计算。这通常是由于策略配置错误或者策略中涉及到了无反应的RPC节点。",
+  "votingValidationFailedMessage": "我们一方出现了一个错误，我们无法核实你是否有资格投票。 这常常是由于错误配置的投票验证或在验证中包含一个不适应的 API。",
+  "notValidVoterMessage": "很抱歉，您似乎没有资格对此提案进行投票。",
   "getHelp": "获取帮助",
   "retry": "重试",
   "currentResults": "当前结果",
@@ -15,6 +19,7 @@
   "save": "保存",
   "author": "作者",
   "next": "下一页",
+  "choice": "选项",
   "submit": "提交",
   "plugins": "插件",
   "information": "信息",
@@ -25,7 +30,7 @@
   "space": "空间",
   "spaces": "空间",
   "verifiedSpace": "已认证的空间",
-  "warningSpace": "这不是一个官方空间，请谨慎行事！",
+  "warningSpace": "这个空间已被标记为潜在的恶意空间，请谨慎行事。",
   "version": "版本",
   "timeline": "时间线",
   "ended": "已结束",
@@ -54,19 +59,22 @@
   "license": "许可证",
   "showMore": "显示更多",
   "voted": "已投票",
+  "reload": "刷新",
   "ipfsServer": "IPFS 服务器",
   "hub": "中心",
   "cancel": "取消",
-  "deleteProposal": "删除提案",
+  "delete": "删除",
   "demoSite": "这是一个演示站点，请试试看！",
   "removeDelegation": "移除委托",
   "confirmRemove": "您确定要移除对的委托吗？",
   "removeSpace": "用于空间 {0}",
-  "confirmVote": "确认投票",
-  "voteOverview": "投票总览",
+  "noVotingPower": "欧，看起来你在区块 blockNumber 没有任何投票权。",
   "quorumReached": "已达到既定人数",
   "options": "选项",
   "votingPower": "您的投票权",
+  "comment": {
+    "placeholder": "分享您的理由(可选)"
+  },
   "receipt": "凭证",
   "relayer": "中继器",
   "verifyOnMycrypto": "在 MyCrypto 上验证凭证",
@@ -117,7 +125,6 @@
   "language": "语言",
   "agree": "我同意",
   "moderators": "版主",
-  "mustAgreeToTerms": "在完成此操作之前，您必须同意此处的{0}服务条款：",
   "playground": "练习场",
   "strategyParams": "策略参数",
   "addresses": "地址",
@@ -129,7 +136,7 @@
   "subspaces": "子空间",
   "mainspace": "主空间",
   "copyLink": "复制链接",
-  "duplicateProposal": "复制提案",
+  "duplicate": "复制",
   "joinedSpaces": "已加入的空间",
   "joinSpaces": "加入空间",
   "setDelegationToSpace": "将委托限制在一个指定空间内",
@@ -140,6 +147,7 @@
   "or": "或者",
   "share": "分享",
   "shareOnTwitter": "分享到 Twitter",
+  "shareOnLenster": "分享到 Lenster",
   "createButton": "创建",
   "discussion": "讨论",
   "changeWallet": "更换钱包",
@@ -158,6 +166,7 @@
     "maxLength": "最大长度为 {0}",
     "pattern": "无效字符",
     "minItems": "最少需要 {0} 个项目",
+    "maxItems": "最多允许 0个项目 ",
     "minStrategy": "至少需要一个策略",
     "website": "URL 格式应为 https://www.example.com",
     "format": "格式无效",
@@ -193,6 +202,7 @@
     "delayEnforced": "空间强制执行直到投票可以开始",
     "periodEnforced": "空间强制执行投票期",
     "typeEnforced": "{type}由空间强制执行",
+    "privacyEnforced": "{type} 由空间强制执行",
     "edit": "编辑",
     "continue": "继续",
     "now": "当前",
@@ -207,7 +217,8 @@
       },
       "customValidation": "您需要通过提案验证后才能提交提案。",
       "executionError": "您在此空间中创建提案的资格验证失败。这可能是由于配置了错误的策略。"
-    }
+    },
+    "errorGettingSnapshot": "我们在获取计算您投票能力所需的快照区块时遇到了一个错误。请稍后再试。"
   },
   "delegate": {
     "header": "委托",
@@ -234,6 +245,8 @@
     "startDate": "开始日期",
     "endDate": "结束日期",
     "votingSystem": "投票制度",
+    "privacy": "隐私",
+    "invalidChoice": "无效的选择",
     "postVoteModal": {
       "defaultTitle": "投票成功！",
       "gnosisSafeTitle": "您的投票正在进行中...",
@@ -269,10 +282,22 @@
     "all": "全部",
     "unread": "未读"
   },
+  "modalTerms": {
+    "mustAgreeTo": "要{action} 此空间，您必须同意{spaceName} 的服务条款。",
+    "actionJoin": "加入",
+    "actionCreate": "创建提案",
+    "actionVote": "投票"
+  },
   "settings": {
     "header": "设置",
     "editController": "编辑控制人",
     "connectWithSpaceOwner": "您处于只读模式，要修改空间设置，请连接控制人或管理员的钱包。",
+    "gnosisWrongNetwork": {
+      "base": "您的Gnosis Safe 在错误的网络上。请链接到网络来action。",
+      "settings": "编辑空间设置",
+      "create": "创建提案",
+      "vote": "对此提案进行投票"
+    },
     "currentSpaceControllerIs": "当前空间控制人是 {address}",
     "newController": "新的控制人",
     "noRecord": "未找到文本记录。请确保 id 已经在 network注册了域名，然后编辑控制人的文本记录来重新设置空间。",
@@ -292,14 +317,14 @@
       "select": "选择类别"
     },
     "terms": {
-      "label": "条款",
+      "label": "服务条款",
       "information": "用户在创建提案或投票前需要接受一次这些条款"
     },
     "hideSpace": "从主页隐藏空间",
     "links": "社交账户",
     "subspaces": {
       "label": "子空间",
-      "information": "子空格仅在主空格和子空格配置后才会显示。 {docs}",
+      "information": "子空间仅在主空间和子空间都配置后才会显示。 ",
       "parent": {
         "label": "主空间",
         "placeholder": "pistachiodao.eth",
@@ -357,7 +382,7 @@
     },
     "type": {
       "label": "类型",
-      "information": "此空间所采用的投票制度类型。该类型的投票制度将应用到所有的提案当中。"
+      "information": "这个空间所使用的投票系统(未来的所有提案也照此执行)"
     },
     "anyType": "任意",
     "hideAbstain": "忽略基本投票结果中的弃权票",
@@ -365,7 +390,7 @@
     "domain": {
       "label": "域名",
       "placeholder": "例如 vote.balancer.fi",
-      "info": "要设置一个自定义域名，您另外需要在github上开启一个pull request。 docs"
+      "info": "要设置一个自定义域名，您另外需要在github上开启一个pull request {docs}。"
     },
     "skin": "皮肤",
     "treasuries": {
@@ -376,14 +401,25 @@
     },
     "addPlugin": "添加插件",
     "editPlugin": "编辑插件",
-    "pluginParameters": "插件参数"
+    "pluginParameters": "插件参数",
+    "proposal": {
+      "title": "提案",
+      "guidelines": {
+        "title": "指南",
+        "information": "在提案创建指南放置一个链接，以帮助用户了解什么是一个好的/有效的提案"
+      },
+      "template": {
+        "title": "模板",
+        "information": "以模板启动每个提案，以帮助用户了解需要的信息"
+      }
+    }
   },
   "setup": {
     "example": "例如 yam.eth",
     "chooseExistingEns": "选择您现有的一个ENS域名来创建空间：",
     "useSingleExistingEns": "使用您现有的ENS域名：",
     "orReigsterNewEns": "或者注册一个新的域名：",
-    "demoTestnetEnsMessage": "若要创建测试空间，您需要在 network 上的 ENS 域名。",
+    "demoTestnetEnsMessage": "若要创建测试空间，您需要在 {network} 上的 ENS 域名。",
     "toCreateASpace": "要创建空间，您首先需要一个ENS域名。在下面输入一个，并按照ENS的注册说明进行操作。",
     "createASpace": "创建空间",
     "registerEnsButton": "注册",
@@ -414,7 +450,9 @@
       "title": "设置空间域名",
       "ensMessage": " 在创建自己的空间之前，您需要设置以太坊主网上的 ENS 域名。",
       "ensMessageTestnet": "你也可以先在Goerli测试网 {link} 测试并处理问题。",
-      "tryDemo": "尝试这个 demo"
+      "tryDemo": "尝试这个 demo",
+      "yourExistingSpaces": "您已经存在的空间",
+      "invalidEns": "此ENS名称无效。 通常这是由于在注册时使用了无效字符。"
     },
     "strategy": {
       "title": "您想如何设置您的投票策略？",
@@ -446,8 +484,10 @@
     "about": {
       "header": "关于我们",
       "joinedSpaces": "已加入的空间",
+      "createdSpaces": "创建空间",
       "biography": "个人介绍",
       "notJoinSpacesYet": "尚未加入任何空间",
+      "notCreatedSpacesYet": "尚未创建任何空间",
       "delegatorNetworkInfo": "通过切换你钱包中的网络进行更改",
       "delegate": "委托",
       "delegated": "已委托",
@@ -461,7 +501,7 @@
       "votedFor": "投了 {choice}",
       "today": "今天",
       "thisWeek": "本周",
-      "older": "更早的",
+      "olderThanWeek": "早于一周前",
       "noActivity": "暂无动态"
     },
     "settings": {
@@ -527,6 +567,41 @@
       "basic": "有三种投票单选项：支持，反对，和弃权"
     }
   },
+  "privacy": {
+    "label": "隐私",
+    "title": "选择投票隐私",
+    "information": "提案中使用的隐私类型。(在所有未来的提案中强制执行)",
+    "any": "任何类型",
+    "none": "未设置",
+    "shutter": {
+      "label": "快门",
+      "description": "选择是加密的，只有在投票期结束后才能看到",
+      "tooltip": "该提案已启用快门隐私。所有的投票都将被加密，直到投票期结束并计算出最终的分数",
+      "url": "https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
+    }
+  },
+  "validation": {
+    "label": "验证",
+    "title": "选择投票验证",
+    "information": "验证类型用来确定用户是否可以投票。(在所有未来的提案中强制执行)",
+    "any": {
+      "label": "任何人都可以投票",
+      "description": "任何拥有投票权的人都可以投票。"
+    },
+    "basic": {
+      "label": "基础",
+      "description": "使用任何策略来确定用户是否可以投票。",
+      "invalidVoterMessage": "您不符合就该提案进行投票的最低余额要求。"
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport门槛",
+      "description": "通过要求用户拥有 Gitcoin Passport 来保护您的提案免受垃圾邮件和投票操纵。",
+      "invalidVoterMessage": "你需要一本带有 amount个如下邮票的Gitcoin Passport才能对这个提案投票: stamps "
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport加权"
+    }
+  },
   "safeSnap": {
     "currentOutcome": "当前结果",
     "currentBond": "当前的保证金",
@@ -568,6 +643,7 @@
       "changeOutcome": "修改结果",
       "executeTxs": "执行交易批处理 {0} / {1}",
       "executed": "所有交易已执行",
+      "noTransactions": "没有需要执行的交易。",
       "rejected": "提案被否决",
       "error": "出了些问题",
       "connectWallet": "连接钱包以查看执行详情",
@@ -575,7 +651,15 @@
       "question": "该提案是否通过并且是否符合",
       "criteria": "接收标准？",
       "proposalPassed": "该提案通过了吗？",
-      "expired": "提案已过期"
+      "expired": "提案已过期",
+      "approveBond": "批准保证金",
+      "confirmVoteResults": "点击确认已通过的提案",
+      "executeTxsUma": "执行交易批次",
+      "deleteDisputedProposal": "删除有争议的提案",
+      "confirmVoteResultsToolTip": "请确保这项提案在提出链上提案之前经快照投票批准。 如果快照投票否决了这项提案，链上的提案也将被否决，你将失去你的保证金。",
+      "approveBondToolTip": "链上提案需要提案人提供保证金。这将批准你的钱包中的代币作为保证金。如果你做了一个无效的提案，它将受到争议，你将失去你的保证金。如果提案是有效的，你的保证金将在交易执行时被退回。",
+      "requestToolTip": "这将在链上提议该快照投票的交易。在一个挑战窗口后，如果提案有效，交易可以被执行，你的保证金将被退回。",
+      "executeToolTip": "这将执行此提案中的交易并退还提议者的保证金。"
     }
   },
   "poap": {
@@ -588,6 +672,24 @@
     "button_show": "浏览收藏",
     "success_claim": "POAP已被铸造到您的收藏中",
     "error_claim": "创建令牌时出错"
+  },
+  "progress": {
+    "progress": "进度",
+    "inProgress": "进行中",
+    "completed": "已完成",
+    "complete": "完成",
+    "newStep": "新步骤",
+    "description": "说明",
+    "add": "添加",
+    "deleteStep": "删除步骤",
+    "deleteConfirm": "您确定要删除吗？",
+    "delete": "删除",
+    "cancel": "取消",
+    "comeBack": "投票结束后再来看看这个提案的进展情况吧！",
+    "confirmSignature": "签名此消息将使我们能够授权您的请求来更新您的提案的进度。",
+    "wentWrong": "哎呀，出了点问题",
+    "voting": "投票中",
+    "soon": "即将到来"
   },
   "charts": {
     "charts": "图表",

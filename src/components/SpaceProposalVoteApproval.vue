@@ -1,29 +1,39 @@
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
 import { shorten } from '@/helpers/utils';
+import { Proposal } from '@/helpers/interfaces';
+import { clone } from '@snapshot-labs/snapshot.js/src/utils';
 
-defineProps({
-  proposal: {
-    type: Object,
-    required: true
-  }
-});
+const props = defineProps<{
+  proposal: Proposal;
+  userChoice: number[] | null;
+}>();
 
 const emit = defineEmits(['selectChoice']);
 
-const selectedChoices = ref([]);
+const selectedChoices = ref<number[]>([]);
 
-function selectChoice(i) {
+function selectChoice(i: number) {
   if (selectedChoices.value.includes(i))
     selectedChoices.value.splice(selectedChoices.value.indexOf(i), 1);
   else selectedChoices.value.push(i);
 
   emit('selectChoice', selectedChoices.value);
 }
+
+watch(
+  () => props.userChoice,
+  () => {
+    if (selectedChoices.value.length === 0)
+      selectedChoices.value = clone(props.userChoice) || [];
+    emit('selectChoice', selectedChoices.value || []);
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <div class="mb-3">
+  <div class="mb-3" data-testid="approval-choice-list">
     <BaseButton
       v-for="(choice, i) in proposal.choices"
       :key="i"
@@ -34,6 +44,7 @@ function selectChoice(i) {
           i + 1
         )
       }"
+      :data-testid="`approval-choice-button-${i}`"
       @click="selectChoice(i + 1)"
     >
       <i-ho-check v-if="selectedChoices.includes(i + 1)" class="absolute" />

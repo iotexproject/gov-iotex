@@ -4,9 +4,13 @@
   "createSpace": "Creează un spațiu",
   "backToHome": "Prima Pagină",
   "actions": "Acţiuni",
+  "poweredBy": "Powered by",
   "results": "Rezultate",
   "resultsError": "Results could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
-  "vpError": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
+  "resultsCalculating": "Final results are being calculated. If you still see this message after a few minutes contact the space admin.",
+  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
+  "votingValidationFailedMessage": "There was an error on our side and we could not verify if you are eligible to vote. This is often due to a misconfigured voting validation or an unresponsive API involved in the validation.",
+  "notValidVoterMessage": "Oops, you don't seem to be eligible to vote on this proposal.",
   "getHelp": "Solicită ajutor",
   "retry": "Retry",
   "currentResults": "Rezultatele actuale",
@@ -15,6 +19,7 @@
   "save": "Salvează",
   "author": "Autor",
   "next": "Continuare",
+  "choice": "Choice",
   "submit": "Trimite",
   "plugins": "Plugin-uri",
   "information": "Informaţii",
@@ -25,7 +30,7 @@
   "space": "Spaţiu",
   "spaces": "Spaţii",
   "verifiedSpace": "Spațiu verificat",
-  "warningSpace": "This is not an official space, proceed with caution!",
+  "warningSpace": "This space has been flagged as potentially malicious. Proceed with caution.",
   "version": "Versiune",
   "timeline": "Cronologie",
   "ended": "ended",
@@ -54,19 +59,22 @@
   "license": "Licență",
   "showMore": "Show more",
   "voted": "Voted",
+  "reload": "Reload",
   "ipfsServer": "Server IPFS",
   "hub": "Hub",
   "cancel": "Anulează",
-  "deleteProposal": "Șterge propunere",
+  "delete": "Delete",
   "demoSite": "Acesta este site-ul demo, încercă-l!",
   "removeDelegation": "Elimină delegația",
   "confirmRemove": "Ești sigur că vrei să elimini delegația către",
   "removeSpace": "pentru spațiul {0}",
-  "confirmVote": "Confirmă votul",
-  "voteOverview": "Vote overview",
+  "noVotingPower": "Oops, it seems you don't have any voting power at block {blockNumber}.",
   "quorumReached": "quorum reached",
   "options": "Opțiunea(i)",
   "votingPower": "Puterea ta de vot",
+  "comment": {
+    "placeholder": "Share your reason (optional)"
+  },
   "receipt": "Chitanță",
   "relayer": "Relayer",
   "verifyOnMycrypto": "Verifică chitanța pe MyCrypto",
@@ -117,7 +125,6 @@
   "language": "Limbă",
   "agree": "Sunt de acord",
   "moderators": "Moderators",
-  "mustAgreeToTerms": "Înainte de a termina această acțiune, trebuie sa accepți {0} terminii serviciului aici:",
   "playground": "Teren de joacă",
   "strategyParams": "Parametrii strategiei",
   "addresses": "Adrese",
@@ -129,7 +136,7 @@
   "subspaces": "Sub-spaces",
   "mainspace": "Main space",
   "copyLink": "Copiază link",
-  "duplicateProposal": "Duplichează propunere",
+  "duplicate": "Duplicate",
   "joinedSpaces": "Spații alăturate",
   "joinSpaces": "Alătura-te la spații",
   "setDelegationToSpace": "Limitarea delegării către un anumit spațiu",
@@ -140,6 +147,7 @@
   "or": "or",
   "share": "Share",
   "shareOnTwitter": "Share on Twitter",
+  "shareOnLenster": "Share on Lenster",
   "createButton": "Create",
   "discussion": "Discussion",
   "changeWallet": "Change wallet",
@@ -158,6 +166,7 @@
     "maxLength": "Lungime maximă de {0}",
     "pattern": "Caracter invalid",
     "minItems": "Minim {0} caracter(e) necesar(e)",
+    "maxItems": "Maximum {0} item(s) allowed",
     "minStrategy": "Este necesară cel puţin o strategie.",
     "website": "URL should be in the format https://www.example.com",
     "format": "Formatul nu este valid",
@@ -193,6 +202,7 @@
     "delayEnforced": "The space enforces a delay until voting can start",
     "periodEnforced": "The space enforces the duration of the voting period",
     "typeEnforced": "{type} is enforced by the space",
+    "privacyEnforced": "{type} is enforced by the space",
     "edit": "Edit",
     "continue": "Continue",
     "now": "Now",
@@ -207,7 +217,8 @@
       },
       "customValidation": "Trebuie sa treci de validarea propunerii pentru a o înscrie.",
       "executionError": "Verifying your eligibility to create proposals in this space has failed. This is likely due to a misconfigured strategy."
-    }
+    },
+    "errorGettingSnapshot": "We encountered an error while fetching the snapshot block number which is needed to calculate your voting power. Please try again later."
   },
   "delegate": {
     "header": "Deleghează",
@@ -234,6 +245,8 @@
     "startDate": "Data începerii",
     "endDate": "Dată de sfârşit",
     "votingSystem": "Sistem de votare",
+    "privacy": "Privacy",
+    "invalidChoice": "Invalid choice",
     "postVoteModal": {
       "defaultTitle": "Your vote is in!",
       "gnosisSafeTitle": "Your vote is pending...",
@@ -269,10 +282,22 @@
     "all": "All",
     "unread": "Unread"
   },
+  "modalTerms": {
+    "mustAgreeTo": "To {action} this space, you must agree to the {spaceName} terms of service.",
+    "actionJoin": "join",
+    "actionCreate": "create a proposal in",
+    "actionVote": "vote in"
+  },
   "settings": {
     "header": "Setări",
     "editController": "Edit controller",
     "connectWithSpaceOwner": "You are in view only mode, to modify space settings connect with a controller or admin wallet.",
+    "gnosisWrongNetwork": {
+      "base": "Your Gnosis Safe is on the wrong network. Please connect to {network} to {action}.",
+      "settings": "edit the space settings",
+      "create": "create a proposal",
+      "vote": "vote on this proposal"
+    },
     "currentSpaceControllerIs": "The current space controller is {address}",
     "newController": "New controller",
     "noRecord": "No text-record found. Make sure you have registered {id} domain on {network}, then edit the controller text-record to regain access to the space settings.",
@@ -292,7 +317,7 @@
       "select": "Select categorie(s)"
     },
     "terms": {
-      "label": "Terms",
+      "label": "Terms of service",
       "information": "Users will be required to accept these terms once before they can create a proposal or cast a vote"
     },
     "hideSpace": "Ascunde spațiu de pe pagina principală",
@@ -357,7 +382,7 @@
     },
     "type": {
       "label": "Type",
-      "information": "The type of voting system used for this space. This will enforce the same voting system for all proposals"
+      "information": "The type of voting system used for this space. (Enforced on all future proposals)"
     },
     "anyType": "Oricare",
     "hideAbstain": "Ignoră voturile de abținere în rezultatele votului de bază",
@@ -376,7 +401,18 @@
     },
     "addPlugin": "Adaugă extensie",
     "editPlugin": "Modifică extensie",
-    "pluginParameters": "Parametrii extensie"
+    "pluginParameters": "Parametrii extensie",
+    "proposal": {
+      "title": "Proposal",
+      "guidelines": {
+        "title": "Guidelines",
+        "information": "Display a link to your guidelines on proposal creation to help users understand what constitutes a good/valid proposal"
+      },
+      "template": {
+        "title": "Template",
+        "information": "Start every proposal with a template to help users understand what information is required"
+      }
+    }
   },
   "setup": {
     "example": "e.g. yam.eth",
@@ -414,7 +450,9 @@
       "title": "Setup your space domain",
       "ensMessage": " One thing you need before you can create your own space, is an ENS domain on Ethereum mainnet.",
       "ensMessageTestnet": "You can also {link} on the Goerli testnet and mess with things there first.",
-      "tryDemo": "try the demo"
+      "tryDemo": "try the demo",
+      "yourExistingSpaces": "Your existing spaces",
+      "invalidEns": "This ENS name is invalid. Usually this is due the use of invalid characters during registration."
     },
     "strategy": {
       "title": "How would you like to setup your voting strategy?",
@@ -446,8 +484,10 @@
     "about": {
       "header": "About",
       "joinedSpaces": "Joined spaces",
+      "createdSpaces": "Created spaces",
       "biography": "Bio",
       "notJoinSpacesYet": "Hasn't joined any spaces yet",
+      "notCreatedSpacesYet": "Hasn't created any spaces yet",
       "delegatorNetworkInfo": "Change by switching network in your wallet",
       "delegate": "Delegate",
       "delegated": "Delegated",
@@ -461,7 +501,7 @@
       "votedFor": "Voted {choice}",
       "today": "Today",
       "thisWeek": "This week",
-      "older": "Older",
+      "olderThanWeek": "Older than a week",
       "noActivity": "No activity yet"
     },
     "settings": {
@@ -527,6 +567,41 @@
       "basic": "Votul unic cu trei opțiuni: Pentru, Împotriva sau Abținere"
     }
   },
+  "privacy": {
+    "label": "Privacy",
+    "title": "Select voting privacy",
+    "information": "The type of privacy used on proposals. (Enforced on all future proposals)",
+    "any": "Any",
+    "none": "None",
+    "shutter": {
+      "label": "Shutter",
+      "description": "Choices are encrypted and only visible once the voting period is over",
+      "tooltip": "This proposal has Shutter privacy enabled. All votes will be encrypted until the voting period has ended and the final score is calculated",
+      "url": "https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
+    }
+  },
+  "validation": {
+    "label": "Validation",
+    "title": "Select voting validation",
+    "information": "The type of validation used to determine if a user can vote. (Enforced on all future proposals)",
+    "any": {
+      "label": "Anyone can vote",
+      "description": "Anyone with voting power can cast a vote."
+    },
+    "basic": {
+      "label": "Basic",
+      "description": "Use any strategy to determine if a user can vote.",
+      "invalidVoterMessage": "You do not meet the minimum balance requirement to vote on this proposal. "
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport gated",
+      "description": "Protect your proposals from spam and vote manipulation by requiring users to have a Gitcoin Passport.",
+      "invalidVoterMessage": "You need a Gitcoin Passport with {amount} of the following stamps to vote on this proposal: {stamps}. "
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport weighted"
+    }
+  },
   "safeSnap": {
     "currentOutcome": "Rezultat curent",
     "currentBond": "Bond curent",
@@ -568,6 +643,7 @@
       "changeOutcome": "Modifică rezultat",
       "executeTxs": "Execută manunchiul de tranzacții {0} din {1}",
       "executed": "Toate tranzacțiile au fost executate",
+      "noTransactions": "There are no transactions to execute",
       "rejected": "Proposal rejected",
       "error": "Ceva nu a funcţionat",
       "connectWallet": "Conectează portofelul pentru a vedea detaliile de execuție",
@@ -575,7 +651,15 @@
       "question": "A trecut această propunere si îndeplinește",
       "criteria": "criterii de acceptare?",
       "proposalPassed": "Propunerea a fost aprobată?",
-      "expired": "The proposal has expired"
+      "expired": "The proposal has expired",
+      "approveBond": "Approve bond",
+      "confirmVoteResults": "Click to confirm the proposal passed",
+      "executeTxsUma": "Execute transaction batch",
+      "deleteDisputedProposal": "Delete disputed proposal",
+      "confirmVoteResultsToolTip": "Make sure this proposal was approved by this Snapshot vote before proposing on-chain. If the Snapshot vote rejected the proposal, the on-chain proposal will be rejected as well and you will lose your bond.",
+      "approveBondToolTip": "On-chain proposals require a bond from the proposer. This will approve tokens from your wallet to be posted as a bond. If you make an invalid proposal, it will be disputed and you will lose your bond. If the proposal is valid, your bond will be returned when the transactions are executed.",
+      "requestToolTip": "This will propose the transactions from this Snapshot vote on-chain. After a challenge window, if the proposal is valid, the transactions can be executed and your bond will be returned.",
+      "executeToolTip": "This will execute the transactions from this proposal and return the proposer's bond."
     }
   },
   "poap": {
@@ -588,6 +672,24 @@
     "button_show": "Răsfoiește colecția",
     "success_claim": "POAP-ul a fost adăugat la colecția ta",
     "error_claim": "A apărut o problemă la mintarea acestui token"
+  },
+  "progress": {
+    "progress": "Progress",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "complete": "Complete",
+    "newStep": "New Step",
+    "description": "Description",
+    "add": "Add",
+    "deleteStep": "Delete Step",
+    "deleteConfirm": "Are you sure you want to delete?",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "comeBack": "Come back after voting is complete to see how this proposal is progressing!",
+    "confirmSignature": "Signing this message will allow us to authorize your request to update the progress of your proposal.",
+    "wentWrong": "Oops something went wrong.",
+    "voting": "Voting",
+    "soon": "Soon"
   },
   "charts": {
     "charts": "Grafice",

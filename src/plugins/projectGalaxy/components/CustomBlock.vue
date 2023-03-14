@@ -4,11 +4,11 @@ import { useWeb3 } from '@/composables/useWeb3';
 
 const { web3Account } = useWeb3();
 
-const APP_URL = 'https://galaxy.eco';
+const APP_URL = 'https://galxe.com';
 const NO_OAT_IMAGE =
   'https://snapshotsplugin.s3.us-west-2.amazonaws.com/placeholder.png';
 const IMG_LOGO_GALAXY =
-  'https://d257b89266utxb.cloudfront.net/galaxy/images/avatar/0x4960c283c45e1898c41633c39fb2015167b20dc3-1655711973.png';
+  'https://cdn-2.galxe.com/galaxy/images/galaxy/1666692826032589364.png';
 const IMG_ICON_LINK =
   'https://d257b89266utxb.cloudfront.net/galaxy/images/avatar/0x4960c283c45e1898c41633c39fb2015167b20dc3-1655712057.png';
 const IMG_ICONS = {
@@ -86,7 +86,7 @@ export default {
       return `${APP_URL}/${this.currentCampaignUrl}`;
     },
     galaxyId() {
-      return `${APP_URL}/galaxyid/${this.address}`;
+      return `${APP_URL}/galxeid/${this.address}`;
     },
     actionEnabled() {
       return (
@@ -227,7 +227,7 @@ export default {
       <div
         class="relative bottom-0 top-0 right-0 left-0 z-10 flex flex-col items-center py-6 px-6"
       >
-        <img :src="imgLogoGalaxy" alt="" class="mb-3 h-auto w-full" style="" />
+        <img :src="imgLogoGalaxy" alt="" class="mb-4 h-3 w-auto" style="" />
         <img
           :src="mainImg"
           alt=""

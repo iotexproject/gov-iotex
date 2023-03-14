@@ -4,9 +4,13 @@
   "createSpace": "スペースを作成する",
   "backToHome": "ホーム",
   "actions": "アクション",
+  "poweredBy": "Powered by",
   "results": "投票結果",
   "resultsError": "結果を計算できませんでした。戦略が誤って設定されていたり、または戦略に対してRPCノードが無反応であることが原因かもしれません。",
-  "vpError": "投票力を計算できませんでした。ストラテジーの誤設定や、ストラテジーに関係するRPCノードが無反応であることが原因かもしれません。",
+  "resultsCalculating": "Final results are being calculated. If you still see this message after a few minutes contact the space admin.",
+  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
+  "votingValidationFailedMessage": "There was an error on our side and we could not verify if you are eligible to vote. This is often due to a misconfigured voting validation or an unresponsive API involved in the validation.",
+  "notValidVoterMessage": "Oops, you don't seem to be eligible to vote on this proposal.",
   "getHelp": "ヘルプ",
   "retry": "リトライ",
   "currentResults": "現在の投票状況",
@@ -15,6 +19,7 @@
   "save": "保存",
   "author": "作成者",
   "next": "次へ",
+  "choice": "Choice",
   "submit": "提出する",
   "plugins": "プラグイン",
   "information": "情報",
@@ -25,7 +30,7 @@
   "space": "スペース",
   "spaces": "スペース",
   "verifiedSpace": "認証済みのスペース",
-  "warningSpace": "This is not an official space, proceed with caution!",
+  "warningSpace": "This space has been flagged as potentially malicious. Proceed with caution.",
   "version": "バージョン",
   "timeline": "タイムライン",
   "ended": "が終了しました。",
@@ -54,19 +59,22 @@
   "license": "ライセンス",
   "showMore": "Show more",
   "voted": "Voted",
+  "reload": "Reload",
   "ipfsServer": "IPFSサーバ",
   "hub": "ハブ",
   "cancel": "キャンセル",
-  "deleteProposal": "提案を削除する",
+  "delete": "Delete",
   "demoSite": "これはデモサイトです。気軽にお試しください！",
   "removeDelegation": "投票権の委任を削除する",
   "confirmRemove": "以下のアドレスへの投票権の委任を削除してもよろしいですか？",
   "removeSpace": "for the space {0}",
-  "confirmVote": "投票内容の確認",
-  "voteOverview": "Vote overview",
+  "noVotingPower": "Oops, it seems you don't have any voting power at block {blockNumber}.",
   "quorumReached": "quorum reached",
   "options": "オプション",
   "votingPower": "あなたの投票力",
+  "comment": {
+    "placeholder": "Share your reason (optional)"
+  },
   "receipt": "レシート",
   "relayer": "リレーヤー",
   "verifyOnMycrypto": "MyCryptoでレシートを検証する",
@@ -117,7 +125,6 @@
   "language": "言語",
   "agree": "同意する",
   "moderators": "Moderators",
-  "mustAgreeToTerms": "このアクションを完了する前に、 {0} 利用規約に同意する必要があります:",
   "playground": "プレイグラウンド",
   "strategyParams": "ストラテジーのパラメータ",
   "addresses": "アドレス",
@@ -129,7 +136,7 @@
   "subspaces": "Sub-spaces",
   "mainspace": "Main space",
   "copyLink": "リンクをコピーする",
-  "duplicateProposal": "提案を複製する",
+  "duplicate": "Duplicate",
   "joinedSpaces": "参加中のスペース",
   "joinSpaces": "スペースに参加する",
   "setDelegationToSpace": "委任を特定のスペースに限定する",
@@ -140,6 +147,7 @@
   "or": "または",
   "share": "共有する",
   "shareOnTwitter": "Share on Twitter",
+  "shareOnLenster": "Share on Lenster",
   "createButton": "作成する",
   "discussion": "Discussion",
   "changeWallet": "Change wallet",
@@ -158,6 +166,7 @@
     "maxLength": "最大文字数は {0} です",
     "pattern": "無効な文字",
     "minItems": "最低 {0} 個のアイテムが必要",
+    "maxItems": "Maximum {0} item(s) allowed",
     "minStrategy": "少なくとも１つストラテジーが必要です",
     "website": "URLはhttps://www.example.com の形式でなければなりません",
     "format": "無効な形式",
@@ -193,6 +202,7 @@
     "delayEnforced": "スペースは投票が開始されるまで遅延を強制する",
     "periodEnforced": "スペースは投票期間を強制します",
     "typeEnforced": "{type} is enforced by the space",
+    "privacyEnforced": "{type} is enforced by the space",
     "edit": "編集",
     "continue": "続行する",
     "now": "今すぐ",
@@ -207,7 +217,8 @@
       },
       "customValidation": "提案を提出するには、提案検証をクリアする必要があります。",
       "executionError": "このスペースで提案を作成する資格を確認することができませんでした。これはおそらくストラテジーの誤設定によるものです。"
-    }
+    },
+    "errorGettingSnapshot": "We encountered an error while fetching the snapshot block number which is needed to calculate your voting power. Please try again later."
   },
   "delegate": {
     "header": "委任",
@@ -234,6 +245,8 @@
     "startDate": "開始日",
     "endDate": "終了日",
     "votingSystem": "投票のシステム",
+    "privacy": "Privacy",
+    "invalidChoice": "Invalid choice",
     "postVoteModal": {
       "defaultTitle": "Your vote is in!",
       "gnosisSafeTitle": "Your vote is pending...",
@@ -269,10 +282,22 @@
     "all": "全て",
     "unread": "未読"
   },
+  "modalTerms": {
+    "mustAgreeTo": "To {action} this space, you must agree to the {spaceName} terms of service.",
+    "actionJoin": "join",
+    "actionCreate": "create a proposal in",
+    "actionVote": "vote in"
+  },
   "settings": {
     "header": "設定",
     "editController": "コントローラの編集",
     "connectWithSpaceOwner": "You are in view only mode, to modify space settings connect with a controller or admin wallet.",
+    "gnosisWrongNetwork": {
+      "base": "Your Gnosis Safe is on the wrong network. Please connect to {network} to {action}.",
+      "settings": "edit the space settings",
+      "create": "create a proposal",
+      "vote": "vote on this proposal"
+    },
     "currentSpaceControllerIs": "現在のスペースコントローラは{address} です。",
     "newController": "新しいコントローラ",
     "noRecord": "No text-record found. Make sure you have registered {id} domain on {network}, then edit the controller text-record to regain access to the space settings.",
@@ -292,7 +317,7 @@
       "select": "Select categorie(s)"
     },
     "terms": {
-      "label": "Terms",
+      "label": "Terms of service",
       "information": "Users will be required to accept these terms once before they can create a proposal or cast a vote"
     },
     "hideSpace": "ホームページからスペースを隠す",
@@ -357,7 +382,7 @@
     },
     "type": {
       "label": "Type",
-      "information": "The type of voting system used for this space. This will enforce the same voting system for all proposals"
+      "information": "The type of voting system used for this space. (Enforced on all future proposals)"
     },
     "anyType": "すべて",
     "hideAbstain": "基本的な投票結果において棄権投票を無視する",
@@ -376,7 +401,18 @@
     },
     "addPlugin": "プラグインを追加する",
     "editPlugin": "プラグインを編集する",
-    "pluginParameters": "プラグインのパラメータ"
+    "pluginParameters": "プラグインのパラメータ",
+    "proposal": {
+      "title": "Proposal",
+      "guidelines": {
+        "title": "Guidelines",
+        "information": "Display a link to your guidelines on proposal creation to help users understand what constitutes a good/valid proposal"
+      },
+      "template": {
+        "title": "Template",
+        "information": "Start every proposal with a template to help users understand what information is required"
+      }
+    }
   },
   "setup": {
     "example": "例 yam.eth",
@@ -414,7 +450,9 @@
       "title": "Setup your space domain",
       "ensMessage": " One thing you need before you can create your own space, is an ENS domain on Ethereum mainnet.",
       "ensMessageTestnet": "You can also {link} on the Goerli testnet and mess with things there first.",
-      "tryDemo": "try the demo"
+      "tryDemo": "try the demo",
+      "yourExistingSpaces": "Your existing spaces",
+      "invalidEns": "This ENS name is invalid. Usually this is due the use of invalid characters during registration."
     },
     "strategy": {
       "title": "How would you like to setup your voting strategy?",
@@ -446,8 +484,10 @@
     "about": {
       "header": "About",
       "joinedSpaces": "Joined spaces",
+      "createdSpaces": "Created spaces",
       "biography": "Bio",
       "notJoinSpacesYet": "Hasn't joined any spaces yet",
+      "notCreatedSpacesYet": "Hasn't created any spaces yet",
       "delegatorNetworkInfo": "Change by switching network in your wallet",
       "delegate": "Delegate",
       "delegated": "Delegated",
@@ -461,7 +501,7 @@
       "votedFor": "Voted {choice}",
       "today": "Today",
       "thisWeek": "This week",
-      "older": "Older",
+      "olderThanWeek": "Older than a week",
       "noActivity": "No activity yet"
     },
     "settings": {
@@ -527,6 +567,41 @@
       "basic": "3つの選択肢（賛成または 反対または棄権）の中から一つを選択する投票"
     }
   },
+  "privacy": {
+    "label": "Privacy",
+    "title": "Select voting privacy",
+    "information": "The type of privacy used on proposals. (Enforced on all future proposals)",
+    "any": "Any",
+    "none": "None",
+    "shutter": {
+      "label": "Shutter",
+      "description": "Choices are encrypted and only visible once the voting period is over",
+      "tooltip": "This proposal has Shutter privacy enabled. All votes will be encrypted until the voting period has ended and the final score is calculated",
+      "url": "https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
+    }
+  },
+  "validation": {
+    "label": "Validation",
+    "title": "Select voting validation",
+    "information": "The type of validation used to determine if a user can vote. (Enforced on all future proposals)",
+    "any": {
+      "label": "Anyone can vote",
+      "description": "Anyone with voting power can cast a vote."
+    },
+    "basic": {
+      "label": "Basic",
+      "description": "Use any strategy to determine if a user can vote.",
+      "invalidVoterMessage": "You do not meet the minimum balance requirement to vote on this proposal. "
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport gated",
+      "description": "Protect your proposals from spam and vote manipulation by requiring users to have a Gitcoin Passport.",
+      "invalidVoterMessage": "You need a Gitcoin Passport with {amount} of the following stamps to vote on this proposal: {stamps}. "
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport weighted"
+    }
+  },
   "safeSnap": {
     "currentOutcome": "現在の結果",
     "currentBond": "Current bond",
@@ -568,6 +643,7 @@
       "changeOutcome": "Change case outcome",
       "executeTxs": "Execute transaction batch {0} of {1}",
       "executed": "すべてのトランザクションが実行されました",
+      "noTransactions": "There are no transactions to execute",
       "rejected": "Proposal rejected",
       "error": "何らかの問題が発生しました",
       "connectWallet": "実行の詳細を表示するにはウォレットに接続してください",
@@ -575,7 +651,15 @@
       "question": "この提案が合格し、それを満たしています",
       "criteria": "受け入れ基準?",
       "proposalPassed": "Did the proposal pass?",
-      "expired": "The proposal has expired"
+      "expired": "The proposal has expired",
+      "approveBond": "Approve bond",
+      "confirmVoteResults": "Click to confirm the proposal passed",
+      "executeTxsUma": "Execute transaction batch",
+      "deleteDisputedProposal": "Delete disputed proposal",
+      "confirmVoteResultsToolTip": "Make sure this proposal was approved by this Snapshot vote before proposing on-chain. If the Snapshot vote rejected the proposal, the on-chain proposal will be rejected as well and you will lose your bond.",
+      "approveBondToolTip": "On-chain proposals require a bond from the proposer. This will approve tokens from your wallet to be posted as a bond. If you make an invalid proposal, it will be disputed and you will lose your bond. If the proposal is valid, your bond will be returned when the transactions are executed.",
+      "requestToolTip": "This will propose the transactions from this Snapshot vote on-chain. After a challenge window, if the proposal is valid, the transactions can be executed and your bond will be returned.",
+      "executeToolTip": "This will execute the transactions from this proposal and return the proposer's bond."
     }
   },
   "poap": {
@@ -588,6 +672,24 @@
     "button_show": "コレクションを閲覧する",
     "success_claim": "POAP があなたのコレクションに追加されました",
     "error_claim": "トークンを発行する際に問題が発生しました。"
+  },
+  "progress": {
+    "progress": "Progress",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "complete": "Complete",
+    "newStep": "New Step",
+    "description": "Description",
+    "add": "Add",
+    "deleteStep": "Delete Step",
+    "deleteConfirm": "Are you sure you want to delete?",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "comeBack": "Come back after voting is complete to see how this proposal is progressing!",
+    "confirmSignature": "Signing this message will allow us to authorize your request to update the progress of your proposal.",
+    "wentWrong": "Oops something went wrong.",
+    "voting": "Voting",
+    "soon": "Soon"
   },
   "charts": {
     "charts": "チャート",

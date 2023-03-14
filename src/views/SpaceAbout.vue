@@ -1,16 +1,29 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import networks from '@snapshot-labs/snapshot.js/src/networks.json';
 import { getUrl } from '@snapshot-labs/snapshot.js/src/utils';
 import { ExtendedSpace } from '@/helpers/interfaces';
 
-import { useProfiles, useI18n } from '@/composables';
+import { useProfiles, useMeta } from '@/composables';
 
 const props = defineProps<{
   space: ExtendedSpace;
 }>();
 
-const { setPageTitle } = useI18n();
+useMeta({
+  title: {
+    key: 'metaInfo.space.about.title',
+    params: {
+      space: props.space.name
+    }
+  },
+  description: {
+    key: 'metaInfo.space.about.description',
+    params: {
+      about: props.space.about.slice(0, 160)
+    }
+  }
+});
+
 const { profiles, loadProfiles } = useProfiles();
 
 type Moderator = {
@@ -47,8 +60,6 @@ const spaceMembers = computed(() => {
 onMounted(() => {
   if (props.space?.admins)
     loadProfiles(props.space.admins.concat(props.space.members));
-  if (props.space?.name)
-    setPageTitle('page.title.space.about', { space: props.space.name });
 });
 </script>
 
@@ -90,32 +101,9 @@ onMounted(() => {
         class="mt-3"
         slim
       >
-        <div
-          v-for="(strategy, i) in space.strategies"
-          :key="i"
-          class="flex items-center justify-between border-b p-4 last:border-b-0"
-        >
-          <div>
-            <div class="flex items-center">
-              <h3>
-                {{ strategy.name }}
-              </h3>
-              <ButtonPlayground
-                :name="strategy.name"
-                :network="strategy.network"
-                :params="strategy.params"
-              />
-            </div>
-
-            <div>{{ networks[strategy.network].name }}</div>
-          </div>
-          <div>
-            <BasePill v-if="strategy.params.symbol" class="py-1">
-              ${{ strategy.params.symbol }}
-            </BasePill>
-          </div>
-        </div>
+        <SpaceAboutStrategiesList :strategies="space.strategies" />
       </BaseBlock>
+
       <BaseBlock
         v-if="space?.admins?.length"
         :title="$t('spaceMembers')"

@@ -2,28 +2,40 @@
 import { encodeJson } from '@/helpers/b64';
 import { useRouter } from 'vue-router';
 
+import { useApp } from '@/composables';
+
 const props = withDefaults(
   defineProps<{
     name: string;
     network?: string;
     params?: any;
     snapshot?: string;
+    big?: boolean;
   }>(),
   {
     name: '',
     network: '',
     params: {},
-    snapshot: ''
+    snapshot: '',
+    big: false
   }
 );
 
-const emit = defineEmits(['close']);
-
 const router = useRouter();
+const { domain } = useApp();
 
 function clickPlayground() {
-  emit('close');
-  router.push({
+  if (domain) {
+    return window.open(
+      `https://snapshot.org/#/playground/${props.name}?query=${encodeJson({
+        params: props.params,
+        network: props.network,
+        snapshot: props.snapshot
+      })}`,
+      '_blank'
+    );
+  }
+  const playgroundRoute = router.resolve({
     name: 'playground',
     query: {
       query: encodeJson({
@@ -34,11 +46,18 @@ function clickPlayground() {
     },
     params: { name: props.name }
   });
+  window.open(playgroundRoute.href, '_blank');
 }
 </script>
 
 <template>
+  <BaseButton v-if="big" class="w-full" @click="clickPlayground">
+    {{ $t('settings.testInPlayground') }}
+    <i-ho-external-link class="mb-[2px] inline-block text-xs" />
+  </BaseButton>
+
   <BaseButtonIcon
+    v-else
     v-tippy="{ content: $t('playground') }"
     @click="clickPlayground"
   >

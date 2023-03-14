@@ -4,9 +4,13 @@
   "createSpace": "공간 만들기",
   "backToHome": "홈",
   "actions": "액션",
+  "poweredBy": "Powered by",
   "results": "결과",
   "resultsError": "결과를 계산할 수 없습니다. 이는 종종 잘못 구성된 전략이나 전략에 포함된 RPC 노드가 응답하지 않아서 일 수 있습니다.",
-  "vpError": "투표권을 계산할 수 없습니다. 이는 종종 잘못 구성된 전략이나 전략에 포함된 RPC 노드가 응답하지 않아서 일 수 있습니다.",
+  "resultsCalculating": "Final results are being calculated. If you still see this message after a few minutes contact the space admin.",
+  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
+  "votingValidationFailedMessage": "There was an error on our side and we could not verify if you are eligible to vote. This is often due to a misconfigured voting validation or an unresponsive API involved in the validation.",
+  "notValidVoterMessage": "Oops, you don't seem to be eligible to vote on this proposal.",
   "getHelp": "도움 받기",
   "retry": "다시하기",
   "currentResults": "현재 결과",
@@ -15,6 +19,7 @@
   "save": "저장",
   "author": "저자",
   "next": "다음",
+  "choice": "Choice",
   "submit": "제출",
   "plugins": "플러그인",
   "information": "정보",
@@ -25,7 +30,7 @@
   "space": "공간",
   "spaces": "공간들",
   "verifiedSpace": "검증된 공간",
-  "warningSpace": "This is not an official space, proceed with caution!",
+  "warningSpace": "This space has been flagged as potentially malicious. Proceed with caution.",
   "version": "버전",
   "timeline": "타임라인",
   "ended": "ended",
@@ -54,19 +59,22 @@
   "license": "라이센스",
   "showMore": "Show more",
   "voted": "Voted",
+  "reload": "Reload",
   "ipfsServer": "IPFS 서버",
   "hub": "허브",
   "cancel": "취소",
-  "deleteProposal": "제안 삭제",
+  "delete": "Delete",
   "demoSite": "데모 사이트입니다. 시도해 보세요!",
   "removeDelegation": "위임 제거",
   "confirmRemove": "위임을 제거하시겠습니까",
   "removeSpace": "{0} 공간",
-  "confirmVote": "투표 확인",
-  "voteOverview": "Vote overview",
+  "noVotingPower": "Oops, it seems you don't have any voting power at block {blockNumber}.",
   "quorumReached": "quorum reached",
   "options": "옵션",
   "votingPower": "당신의 투표권",
+  "comment": {
+    "placeholder": "Share your reason (optional)"
+  },
   "receipt": "처리 결과",
   "relayer": "중계자",
   "verifyOnMycrypto": "MyCrypto에서 처리결과 확인",
@@ -117,7 +125,6 @@
   "language": "언어",
   "agree": "동의함",
   "moderators": "Moderators",
-  "mustAgreeToTerms": "이 작업을 완료하려면 {0} 서비스 약관에 동의해야 합니다.",
   "playground": "플레이그라운드",
   "strategyParams": "전략 매개변수",
   "addresses": "주소",
@@ -129,7 +136,7 @@
   "subspaces": "Sub-spaces",
   "mainspace": "Main space",
   "copyLink": "링크 복사",
-  "duplicateProposal": "제안 복사",
+  "duplicate": "Duplicate",
   "joinedSpaces": "참여한 공간",
   "joinSpaces": "공간 참여",
   "setDelegationToSpace": "특정 공간으로 위임 제한",
@@ -140,6 +147,7 @@
   "or": "또는",
   "share": "Share",
   "shareOnTwitter": "Share on Twitter",
+  "shareOnLenster": "Share on Lenster",
   "createButton": "Create",
   "discussion": "Discussion",
   "changeWallet": "Change wallet",
@@ -158,6 +166,7 @@
     "maxLength": "최대 길이: {0}",
     "pattern": "잘못된 문자",
     "minItems": "최소 {0} 개 항목 필요",
+    "maxItems": "Maximum {0} item(s) allowed",
     "minStrategy": "적어도 한 개의 전략이 필요합니다.",
     "website": "URL should be in the format https://www.example.com",
     "format": "잘못된 형식",
@@ -193,6 +202,7 @@
     "delayEnforced": "투표가 시작될 때까지 공간이 지연됩니다.",
     "periodEnforced": "공간은 투표 기간을 적용합니다.",
     "typeEnforced": "{type} is enforced by the space",
+    "privacyEnforced": "{type} is enforced by the space",
     "edit": "편집",
     "continue": "계속",
     "now": "현재",
@@ -207,7 +217,8 @@
       },
       "customValidation": "당신은 제안서를 제출하기 위해 제안의 유효성 검사를 통과해야합니다.",
       "executionError": "제안 생성에 대한 자격이 있는지 확인하는 데 실패했습니다. 이는 잘못 구성된 전략 때문일 수 있습니다."
-    }
+    },
+    "errorGettingSnapshot": "We encountered an error while fetching the snapshot block number which is needed to calculate your voting power. Please try again later."
   },
   "delegate": {
     "header": "대리자",
@@ -234,6 +245,8 @@
     "startDate": "시작일",
     "endDate": "종료일",
     "votingSystem": "투표 유형",
+    "privacy": "Privacy",
+    "invalidChoice": "Invalid choice",
     "postVoteModal": {
       "defaultTitle": "Your vote is in!",
       "gnosisSafeTitle": "Your vote is pending...",
@@ -269,10 +282,22 @@
     "all": "All",
     "unread": "Unread"
   },
+  "modalTerms": {
+    "mustAgreeTo": "To {action} this space, you must agree to the {spaceName} terms of service.",
+    "actionJoin": "join",
+    "actionCreate": "create a proposal in",
+    "actionVote": "vote in"
+  },
   "settings": {
     "header": "설정",
     "editController": "관리자 설정",
     "connectWithSpaceOwner": "You are in view only mode, to modify space settings connect with a controller or admin wallet.",
+    "gnosisWrongNetwork": {
+      "base": "Your Gnosis Safe is on the wrong network. Please connect to {network} to {action}.",
+      "settings": "edit the space settings",
+      "create": "create a proposal",
+      "vote": "vote on this proposal"
+    },
     "currentSpaceControllerIs": "The current space controller is {address}",
     "newController": "New controller",
     "noRecord": "No text-record found. Make sure you have registered {id} domain on {network}, then edit the controller text-record to regain access to the space settings.",
@@ -292,7 +317,7 @@
       "select": "Select categorie(s)"
     },
     "terms": {
-      "label": "Terms",
+      "label": "Terms of service",
       "information": "Users will be required to accept these terms once before they can create a proposal or cast a vote"
     },
     "hideSpace": "홈페이지에서 공간 숨기기",
@@ -357,7 +382,7 @@
     },
     "type": {
       "label": "Type",
-      "information": "The type of voting system used for this space. This will enforce the same voting system for all proposals"
+      "information": "The type of voting system used for this space. (Enforced on all future proposals)"
     },
     "anyType": "어떤",
     "hideAbstain": "기본 투표 결과에서 기권 투표 무시",
@@ -376,7 +401,18 @@
     },
     "addPlugin": "플러그인 추가",
     "editPlugin": "편집 플러그인",
-    "pluginParameters": "플러그인 매개변수"
+    "pluginParameters": "플러그인 매개변수",
+    "proposal": {
+      "title": "Proposal",
+      "guidelines": {
+        "title": "Guidelines",
+        "information": "Display a link to your guidelines on proposal creation to help users understand what constitutes a good/valid proposal"
+      },
+      "template": {
+        "title": "Template",
+        "information": "Start every proposal with a template to help users understand what information is required"
+      }
+    }
   },
   "setup": {
     "example": "예시 yam.eth",
@@ -414,7 +450,9 @@
       "title": "Setup your space domain",
       "ensMessage": " One thing you need before you can create your own space, is an ENS domain on Ethereum mainnet.",
       "ensMessageTestnet": "You can also {link} on the Goerli testnet and mess with things there first.",
-      "tryDemo": "try the demo"
+      "tryDemo": "try the demo",
+      "yourExistingSpaces": "Your existing spaces",
+      "invalidEns": "This ENS name is invalid. Usually this is due the use of invalid characters during registration."
     },
     "strategy": {
       "title": "How would you like to setup your voting strategy?",
@@ -446,8 +484,10 @@
     "about": {
       "header": "About",
       "joinedSpaces": "Joined spaces",
+      "createdSpaces": "Created spaces",
       "biography": "Bio",
       "notJoinSpacesYet": "Hasn't joined any spaces yet",
+      "notCreatedSpacesYet": "Hasn't created any spaces yet",
       "delegatorNetworkInfo": "Change by switching network in your wallet",
       "delegate": "Delegate",
       "delegated": "Delegated",
@@ -461,7 +501,7 @@
       "votedFor": "Voted {choice}",
       "today": "Today",
       "thisWeek": "This week",
-      "older": "Older",
+      "olderThanWeek": "Older than a week",
       "noActivity": "No activity yet"
     },
     "settings": {
@@ -527,6 +567,41 @@
       "basic": "세 가지 선택이 있는 단일 선택 투표: 찬성, 반대 또는 기권"
     }
   },
+  "privacy": {
+    "label": "Privacy",
+    "title": "Select voting privacy",
+    "information": "The type of privacy used on proposals. (Enforced on all future proposals)",
+    "any": "Any",
+    "none": "None",
+    "shutter": {
+      "label": "Shutter",
+      "description": "Choices are encrypted and only visible once the voting period is over",
+      "tooltip": "This proposal has Shutter privacy enabled. All votes will be encrypted until the voting period has ended and the final score is calculated",
+      "url": "https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
+    }
+  },
+  "validation": {
+    "label": "Validation",
+    "title": "Select voting validation",
+    "information": "The type of validation used to determine if a user can vote. (Enforced on all future proposals)",
+    "any": {
+      "label": "Anyone can vote",
+      "description": "Anyone with voting power can cast a vote."
+    },
+    "basic": {
+      "label": "Basic",
+      "description": "Use any strategy to determine if a user can vote.",
+      "invalidVoterMessage": "You do not meet the minimum balance requirement to vote on this proposal. "
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport gated",
+      "description": "Protect your proposals from spam and vote manipulation by requiring users to have a Gitcoin Passport.",
+      "invalidVoterMessage": "You need a Gitcoin Passport with {amount} of the following stamps to vote on this proposal: {stamps}. "
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport weighted"
+    }
+  },
   "safeSnap": {
     "currentOutcome": "현재 결과",
     "currentBond": "현재 채권",
@@ -568,6 +643,7 @@
       "changeOutcome": "결과 변경",
       "executeTxs": "{1} 의 트랜잭션 배치 {0} 실행",
       "executed": "모든 트랜잭션이 실행되었습니다.",
+      "noTransactions": "There are no transactions to execute",
       "rejected": "Proposal rejected",
       "error": "뭔가 잘못되었습니다.",
       "connectWallet": "실행 세부 정보를 보려면 지갑을 연결합니다.",
@@ -575,7 +651,15 @@
       "question": "이 제안이 통과되었을 때 다음을 충족",
       "criteria": "통과 기준?",
       "proposalPassed": "제안이 통과되었습니까?",
-      "expired": "The proposal has expired"
+      "expired": "The proposal has expired",
+      "approveBond": "Approve bond",
+      "confirmVoteResults": "Click to confirm the proposal passed",
+      "executeTxsUma": "Execute transaction batch",
+      "deleteDisputedProposal": "Delete disputed proposal",
+      "confirmVoteResultsToolTip": "Make sure this proposal was approved by this Snapshot vote before proposing on-chain. If the Snapshot vote rejected the proposal, the on-chain proposal will be rejected as well and you will lose your bond.",
+      "approveBondToolTip": "On-chain proposals require a bond from the proposer. This will approve tokens from your wallet to be posted as a bond. If you make an invalid proposal, it will be disputed and you will lose your bond. If the proposal is valid, your bond will be returned when the transactions are executed.",
+      "requestToolTip": "This will propose the transactions from this Snapshot vote on-chain. After a challenge window, if the proposal is valid, the transactions can be executed and your bond will be returned.",
+      "executeToolTip": "This will execute the transactions from this proposal and return the proposer's bond."
     }
   },
   "poap": {
@@ -588,6 +672,24 @@
     "button_show": "컬렉션 보기",
     "success_claim": "POAP이 컬렉션에 발행되었습니다.",
     "error_claim": "토큰 발행에 문제가 발생했습니다."
+  },
+  "progress": {
+    "progress": "Progress",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "complete": "Complete",
+    "newStep": "New Step",
+    "description": "Description",
+    "add": "Add",
+    "deleteStep": "Delete Step",
+    "deleteConfirm": "Are you sure you want to delete?",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "comeBack": "Come back after voting is complete to see how this proposal is progressing!",
+    "confirmSignature": "Signing this message will allow us to authorize your request to update the progress of your proposal.",
+    "wentWrong": "Oops something went wrong.",
+    "voting": "Voting",
+    "soon": "Soon"
   },
   "charts": {
     "charts": "차트",

@@ -8,11 +8,12 @@ export const VOTES_QUERY = gql`
     $orderBy: String
     $orderDirection: OrderDirection
     $voter: String
+    $space: String
   ) {
     votes(
       first: $first
       skip: $skip
-      where: { proposal: $id, vp_gt: 0, voter: $voter }
+      where: { proposal: $id, vp_gt: 0, voter: $voter, space: $space }
       orderBy: $orderBy
       orderDirection: $orderDirection
     ) {
@@ -21,6 +22,8 @@ export const VOTES_QUERY = gql`
       choice
       vp
       vp_by_strategy
+      reason
+      created
     }
   }
 `;
@@ -45,6 +48,11 @@ export const PROPOSAL_QUERY = gql`
       type
       quorum
       symbol
+      privacy
+      validation {
+        name
+        params
+      }
       strategies {
         name
         network
@@ -186,13 +194,17 @@ export const SPACES_QUERY = gql`
       twitter
       website
       github
+      coingecko
       private
       domain
-      members
       admins
+      moderators
+      members
       categories
       plugins
       followersCount
+      template
+      guidelines
       parent {
         id
         name
@@ -216,6 +228,7 @@ export const SPACES_QUERY = gql`
         period
         type
         quorum
+        privacy
         hideAbstain
       }
       strategies {
@@ -224,6 +237,10 @@ export const SPACES_QUERY = gql`
         params
       }
       validation {
+        name
+        params
+      }
+      voteValidation {
         name
         params
       }

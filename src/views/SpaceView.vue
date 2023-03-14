@@ -1,14 +1,15 @@
-<script setup>
-import { computed, onMounted } from 'vue';
+<script setup lang="ts">
+import { computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import aliases from '@/../snapshot-spaces/spaces/aliases.json';
+
 import { useApp, useExtendedSpaces } from '@/composables';
 
 const route = useRoute();
 const router = useRouter();
 const { domain } = useApp();
-const aliasedSpace = aliases[domain] || aliases[route.params.key];
-const { loadExtentedSpaces, extentedSpaces } = useExtendedSpaces();
+const aliasedSpace = aliases[domain] || aliases[route.params.key as string];
+const { loadExtendedSpaces, extendedSpaces } = useExtendedSpaces();
 
 // Redirect the user to the ENS address if the space is aliased.
 if (aliasedSpace) {
@@ -21,19 +22,26 @@ if (aliasedSpace) {
 
 const spaceKey = computed(() => aliasedSpace || domain || route.params.key);
 const space = computed(() =>
-  extentedSpaces.value?.find(s => s.id === spaceKey.value)
+  extendedSpaces.value?.find(s => s.id === spaceKey.value.toLowerCase())
 );
 
-onMounted(async () => {
-  await loadExtentedSpaces([spaceKey.value]);
-  if (!space.value) {
-    router.push('/');
-  }
-});
+watch(
+  spaceKey,
+  async () => {
+    if (!spaceKey.value) return;
+    await loadExtendedSpaces([spaceKey.value.toLowerCase()]);
+    if (!space.value) {
+      router.push('/');
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <router-view v-if="space" :space="space" />
+  <SpaceWarningFlagged :space-key="spaceKey" />
+
+  <router-view v-if="space" :space="space" :space-key="spaceKey" />
   <div v-else>
     <!-- Lazy loading skeleton for space page with left sidebar layout -->
     <TheLayout

@@ -23,7 +23,7 @@ import {
 } from '@/composables';
 
 const route = useRoute();
-const { t, setPageTitle } = useI18n();
+const { t } = useI18n();
 const { web3Account } = useWeb3();
 const { formatCompactNumber } = useIntl();
 const { modalAccountOpen } = useModal();
@@ -78,7 +78,7 @@ const validateToInput = computed(() => {
 watch(
   web3Account,
   () => {
-    loadOwnedEnsDomains();
+    loadOwnedEnsDomains(web3Account.value);
   },
   { immediate: true }
 );
@@ -226,7 +226,6 @@ debouncedWatch(
 
 onMounted(async () => {
   if (route.params.key) specifySpaceChecked.value = true;
-  setPageTitle('page.title.delegate');
   await getDelegationsAndDelegates();
   loaded.value = true;
 });

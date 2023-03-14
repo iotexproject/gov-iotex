@@ -1,9 +1,23 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { ExtendedSpace } from '@/helpers/interfaces';
+import legacySpaces from '@/../snapshot-spaces/spaces/legacy.json';
 
-defineProps<{
+const props = defineProps<{
   space: ExtendedSpace;
 }>();
+
+const hasDelegationStrategy = computed(() => {
+  return props.space.strategies?.some(
+    strategy =>
+      strategy.name.includes('delegation') ||
+      JSON.stringify(strategy.params).includes('"delegation"')
+  );
+});
+
+const isLegacySpace = computed(() => {
+  return Object.keys(legacySpaces).includes(props.space.id);
+});
 </script>
 
 <template>
@@ -15,7 +29,7 @@ defineProps<{
     </router-link>
     <router-link
       v-slot="{ isExactActive }"
-      :to="{ name: 'spaceCreate', params: { step: 1 } }"
+      :to="{ name: 'spaceCreate', params: { step: 0 } }"
       data-testid="create-proposal-button"
     >
       <BaseSidebarNavigationItem :is-active="isExactActive">
@@ -23,7 +37,7 @@ defineProps<{
       </BaseSidebarNavigationItem>
     </router-link>
     <router-link
-      v-if="space.strategies?.find(strategy => strategy.name === 'delegation')"
+      v-if="hasDelegationStrategy"
       v-slot="{ isExactActive }"
       :to="{ name: 'delegate', params: { key: space.id } }"
     >
@@ -31,7 +45,11 @@ defineProps<{
         {{ $t('delegate.header') }}
       </BaseSidebarNavigationItem>
     </router-link>
-    <router-link v-slot="{ isActive }" :to="{ name: 'spaceTreasury' }">
+    <router-link
+      v-if="space.treasuries.length"
+      v-slot="{ isActive }"
+      :to="{ name: 'spaceTreasury' }"
+    >
       <BaseSidebarNavigationItem :is-active="isActive">
         {{ $t('treasury.title') }}
       </BaseSidebarNavigationItem>
@@ -41,7 +59,11 @@ defineProps<{
         {{ $t('about') }}
       </BaseSidebarNavigationItem>
     </router-link>
-    <router-link v-slot="{ isExactActive }" :to="{ name: 'spaceSettings' }">
+    <router-link
+      v-if="!isLegacySpace"
+      v-slot="{ isExactActive }"
+      :to="{ name: 'spaceSettings' }"
+    >
       <BaseSidebarNavigationItem :is-active="isExactActive">
         {{ $t('settings.header') }}
       </BaseSidebarNavigationItem>

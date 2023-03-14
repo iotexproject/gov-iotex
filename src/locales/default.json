@@ -4,9 +4,11 @@
   "createSpace": "Create space",
   "backToHome": "Home",
   "actions": "Actions",
+  "poweredBy": "Powered by",
   "results": "Results",
   "resultsError": "Results could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
-  "vpError": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
+  "resultsCalculating": "Final results are being calculated. If you still see this message after a few minutes contact the space admin.",
+  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
   "getHelp": "Get help",
   "retry": "Retry",
   "currentResults": "Current results",
@@ -15,6 +17,7 @@
   "save": "Save",
   "author": "Author",
   "next": "Next",
+  "choice": "Choice",
   "submit": "Submit",
   "plugins": "Plugins",
   "information": "Information",
@@ -25,7 +28,7 @@
   "space": "Space",
   "spaces": "Spaces",
   "verifiedSpace": "Verified space",
-  "warningSpace": "This is not an official space, proceed with caution!",
+  "warningSpace": "This space has been flagged as potentially malicious. Proceed with caution.",
   "version": "Version",
   "timeline": "Timeline",
   "ended": "ended",
@@ -54,19 +57,22 @@
   "license": "License",
   "showMore": "Show more",
   "voted": "Voted",
+  "reload": "Reload",
   "ipfsServer": "IPFS server",
   "hub": "Hub",
   "cancel": "Cancel",
-  "deleteProposal": "Delete proposal",
+  "delete": "Delete",
   "demoSite": "This is the demo site, give it a try!",
   "removeDelegation": "Remove delegation",
   "confirmRemove": "Are you sure you want to remove your delegation to",
   "removeSpace": "for the space {0}",
-  "confirmVote": "Confirm vote",
-  "voteOverview": "Vote overview",
+  "noVotingPower": "Oops, it seems you don't have any voting power at block {blockNumber}.",
   "quorumReached": "quorum reached",
   "options": "Option(s)",
   "votingPower": "Your voting power",
+  "comment": {
+    "placeholder": "Share your reason (optional)"
+  },
   "receipt": "Receipt",
   "relayer": "Relayer",
   "verifyOnMycrypto": "Verify receipt on MyCrypto",
@@ -117,8 +123,8 @@
   "language": "Language",
   "agree": "I agree",
   "moderators": "Moderators",
-  "mustAgreeToTerms": "Before you can complete this action, you must agree to {0} terms of service here:",
   "playground": "Playground",
+  "strategyDetails": "Strategy details",
   "strategyParams": "Strategy params",
   "addresses": "Addresses",
   "networkErrorPlayground": "Network error - please open your browser console for more information",
@@ -129,7 +135,7 @@
   "subspaces": "Sub-spaces",
   "mainspace": "Main space",
   "copyLink": "Copy link",
-  "duplicateProposal": "Duplicate proposal",
+  "duplicate": "Duplicate",
   "joinedSpaces": "Joined spaces",
   "joinSpaces": "Join spaces",
   "setDelegationToSpace": "Limit delegation to a specific space",
@@ -140,6 +146,7 @@
   "or": "or",
   "share": "Share",
   "shareOnTwitter": "Share on Twitter",
+  "shareOnLenster": "Share on Lenster",
   "createButton": "Create",
   "discussion": "Discussion",
   "changeWallet": "Change wallet",
@@ -158,6 +165,10 @@
     "maxLength": "Maximum length is {0}",
     "pattern": "Invalid character",
     "minItems": "Minimum {0} item(s) required",
+    "maxItems": "Maximum {0} item(s) allowed",
+    "members": {
+      "maxItems": "Maximum {limit} {role} allowed"
+    },
     "minStrategy": "At least one strategy is required.",
     "website": "URL should be in the format https://www.example.com",
     "format": "Invalid format",
@@ -193,6 +204,7 @@
     "delayEnforced": "The space enforces a delay until voting can start",
     "periodEnforced": "The space enforces the duration of the voting period",
     "typeEnforced": "{type} is enforced by the space",
+    "privacyEnforced": "{type} is enforced by the space",
     "edit": "Edit",
     "continue": "Continue",
     "now": "Now",
@@ -200,14 +212,7 @@
     "uploadImageExplainer": "Attach images by dragging & dropping, selecting or pasting them.",
     "uploading": "Uploading image",
     "markdown": "Styling with Markdown is supported",
-    "validationWarning": {
-      "basic": {
-        "member": "You need to be an author of the space in order to submit a proposal.",
-        "minScore": "You need to have a minimum of {0} {1} in order to submit a proposal."
-      },
-      "customValidation": "You need to pass the proposal validation in order to submit a proposal.",
-      "executionError": "Verifying your eligibility to create proposals in this space has failed. This is likely due to a misconfigured strategy."
-    }
+    "errorGettingSnapshot": "We encountered an error while fetching the snapshot block number which is needed to calculate your voting power. Please try again later."
   },
   "delegate": {
     "header": "Delegate",
@@ -234,6 +239,8 @@
     "startDate": "Start date",
     "endDate": "End date",
     "votingSystem": "Voting system",
+    "privacy": "Privacy",
+    "invalidChoice": "Invalid choice",
     "postVoteModal": {
       "defaultTitle": "Your vote is in!",
       "gnosisSafeTitle": "Your vote is pending...",
@@ -269,10 +276,28 @@
     "all": "All",
     "unread": "Unread"
   },
+  "modalNotifications": {
+    "wrong timestamp": {
+      "title": "Wrong timestamp",
+      "message": "The message timestamp is not valid. Please check the clock on your device, make sure it is set to the correct date and time and try again."
+    }
+  },
+  "modalTerms": {
+    "mustAgreeTo": "To {action} this space, you must agree to the {spaceName} terms of service.",
+    "actionJoin": "join",
+    "actionCreate": "create a proposal in",
+    "actionVote": "vote in"
+  },
   "settings": {
     "header": "Settings",
     "editController": "Edit controller",
     "connectWithSpaceOwner": "You are in view only mode, to modify space settings connect with a controller or admin wallet.",
+    "gnosisWrongNetwork": {
+      "base": "Your Gnosis Safe is on the wrong network. Please connect to {network} to {action}.",
+      "settings": "edit the space settings",
+      "create": "create a proposal",
+      "vote": "vote on this proposal"
+    },
     "currentSpaceControllerIs": "The current space controller is {address}",
     "newController": "New controller",
     "noRecord": "No text-record found. Make sure you have registered {id} domain on {network}, then edit the controller text-record to regain access to the space settings.",
@@ -292,14 +317,14 @@
       "select": "Select categorie(s)"
     },
     "terms": {
-      "label": "Terms",
+      "label": "Terms of service",
       "information": "Users will be required to accept these terms once before they can create a proposal or cast a vote"
     },
     "hideSpace": "Hide space from homepage",
     "links": "Social accounts",
     "subspaces": {
       "label": "Sub-spaces",
-      "information": "Sub-spaces will only be shown once configured on both the main space and the sub-space(s). {docs}",
+      "information": "Add a sub-space to display its proposals within your space. If you want the current space to be displayed on the sub-space's page, the space needs to be added as main space in the sub-space settings to make relation mutual. {docs}",
       "parent": {
         "label": "Main space",
         "placeholder": "pistachiodao.eth",
@@ -328,13 +353,23 @@
     "votingPowerIsCumulative": "Voting power is cumulative",
     "addStrategy": "Add strategy",
     "testInPlayground": "Test in playground",
-    "admins": {
-      "label": "Admins",
-      "information": "Admins are able to modify the space settings and manage the space's proposals"
-    },
-    "authors": {
-      "label": "Authors",
-      "information": "Authors are always able to create proposals"
+    "members": {
+      "title": "Members",
+      "information": "Members have different roles and permissions within the space.",
+      "addMembers": "Add members",
+      "addMembersInformation": "Paste an address to add a member. You can add multiple members at once by separating them with a comma.",
+      "alreadyExists": "Member already exists",
+      "invalidAddress": "Invalid address",
+      "membersAdded": "Members added",
+      "admin": {
+        "description": "Able to modify the space settings, manage the space's proposals and create proposals"
+      },
+      "moderator": {
+        "description": "Able to manage the space's proposals and create proposals"
+      },
+      "author": {
+        "description": "Able to create proposals without having to go through proposal validation"
+      }
     },
     "proposalValidation": "Proposal validation",
     "validation": "Type",
@@ -357,7 +392,7 @@
     },
     "type": {
       "label": "Type",
-      "information": "The type of voting system used for this space. This will enforce the same voting system for all proposals"
+      "information": "The type of voting system used for this space. (Enforced on all future proposals)"
     },
     "anyType": "Any",
     "hideAbstain": "Ignore abstain votes in basic voting results",
@@ -376,7 +411,18 @@
     },
     "addPlugin": "Add plugin",
     "editPlugin": "Edit plugin",
-    "pluginParameters": "Plugin parameters"
+    "pluginParameters": "Plugin parameters",
+    "proposal": {
+      "title": "Proposal",
+      "guidelines": {
+        "title": "Guidelines",
+        "information": "Display a link to your guidelines on proposal creation to help users understand what constitutes a good/valid proposal"
+      },
+      "template": {
+        "title": "Template",
+        "information": "Start every proposal with a template to help users understand what information is required"
+      }
+    }
   },
   "setup": {
     "example": "e.g. yam.eth",
@@ -414,7 +460,9 @@
       "title": "Setup your space domain",
       "ensMessage": " One thing you need before you can create your own space, is an ENS domain on Ethereum mainnet.",
       "ensMessageTestnet": "You can also {link} on the Goerli testnet and mess with things there first.",
-      "tryDemo": "try the demo"
+      "tryDemo": "try the demo",
+      "yourExistingSpaces": "Your existing spaces",
+      "invalidEns": "This ENS name is invalid. Usually this is due the use of invalid characters during registration."
     },
     "strategy": {
       "title": "How would you like to setup your voting strategy?",
@@ -446,8 +494,10 @@
     "about": {
       "header": "About",
       "joinedSpaces": "Joined spaces",
+      "createdSpaces": "Created spaces",
       "biography": "Bio",
       "notJoinSpacesYet": "Hasn't joined any spaces yet",
+      "notCreatedSpacesYet": "Hasn't created any spaces yet",
       "delegatorNetworkInfo": "Change by switching network in your wallet",
       "delegate": "Delegate",
       "delegated": "Delegated",
@@ -461,7 +511,7 @@
       "votedFor": "Voted {choice}",
       "today": "Today",
       "thisWeek": "This week",
-      "older": "Older",
+      "olderThanWeek": "Older than a week",
       "noActivity": "No activity yet"
     },
     "settings": {
@@ -512,19 +562,96 @@
   },
   "voting": {
     "selectVoting": "Select voting system",
-    "single-choice": "Single choice voting",
-    "approval": "Approval voting",
-    "quadratic": "Quadratic voting",
-    "ranked-choice": "Ranked choice voting",
-    "weighted": "Weighted voting",
-    "basic": "Basic voting",
-    "description": {
-      "single-choice": "Each voter may select only one choice.",
-      "approval": "Each voter may select any number of choices.",
-      "quadratic": "Each voter may spread voting power across any number of choices. Results are calculated quadratically.",
-      "ranked-choice": "Each voter may select and rank any number of choices. Results are calculated by instant-runoff counting method.",
-      "weighted": "Each voter may spread voting power across any number of choices.",
-      "basic": "Single choice voting with three choices: For, Against or Abstain"
+    "single-choice": {
+      "label": "Single choice voting",
+      "description": "Each voter may select only one choice."
+    },
+    "approval": {
+      "label": "Approval voting",
+      "description": "Each voter may select any number of choices."
+    },
+    "quadratic": {
+      "label": "Quadratic voting",
+      "description": "Each voter may spread voting power across any number of choices. Results are calculated quadratically."
+    },
+    "ranked-choice": {
+      "label": "Ranked choice voting",
+      "description": "Each voter may select and rank any number of choices. Results are calculated by instant-runoff counting method."
+    },
+    "weighted": {
+      "label": "Weighted voting",
+      "description": "Each voter may spread voting power across any number of choices."
+    },
+    "basic": {
+      "label": "Basic voting",
+      "description": "Single choice voting with three choices: For, Against or Abstain"
+    }
+  },
+  "privacy": {
+    "label": "Privacy",
+    "title": "Select voting privacy",
+    "information": "The type of privacy used on proposals. (Enforced on all future proposals)",
+    "any": "Any",
+    "none": "None",
+    "shutter": {
+      "label": "Shutter",
+      "description": "Choices are encrypted and only visible once the voting period is over",
+      "tooltip": "This proposal has Shutter privacy enabled. All votes will be encrypted until the voting period has ended and the final score is calculated",
+      "url": "https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
+    }
+  },
+  "proposalValidation": {
+    "label": "Validation",
+    "title": "Select validation",
+    "settingsTitle": "Configure validation",
+    "paramPlaceholder": "Validation parameters",
+    "information": "The type of validation used to determine if a user can create a proposal. (Enforced on all future proposals)",
+    "executionError": "There was an error on our side and we could not verify if you are eligible to create a proposal. This is often due to a misconfigured voting validation or an unresponsive API involved in the validation.",
+    "notValidMessage": "Oops, you don't seem to be eligible to submit a proposal.",
+    "onlyMemberMessage": "You need to be a core member of the space in order to submit a proposal.",
+    "notConnectedMessage": "You need to connect your wallet in order to submit a proposal.",
+    "any": {
+      "label": "Anyone can create",
+      "description": "Anyone can create a proposal."
+    },
+    "basic": {
+      "label": "Basic",
+      "description": "Use any strategy to determine if a user can create a proposal.",
+      "invalidVoterMessage": "You do not meet the minimum balance requirement of {amount} {symbol} to create a proposal."
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport gated",
+      "description": "Protect your space from spam by requiring users to have a Gitcoin Passport to create a proposal.",
+      "invalidVoterMessage": "You need a Gitcoin Passport with {operator} of the following stamps to create a proposal: {stamps}"
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport weighted"
+    }
+  },
+  "votingValidation": {
+    "label": "Validation",
+    "title": "Select validation",
+    "settingsTitle": "Configure validation",
+    "paramPlaceholder": "Validation parameters",
+    "information": "The type of validation used to determine if a user can vote. (Enforced on all future proposals)",
+    "executionError": "There was an error on our side and we could not verify if you are eligible to vote. This is often due to a misconfigured voting validation or an unresponsive API involved in the validation.",
+    "notValidMessage": "Oops, you don't seem to be eligible to vote on this proposal.",
+    "any": {
+      "label": "Anyone can vote",
+      "description": "Anyone with voting power can cast a vote."
+    },
+    "basic": {
+      "label": "Basic",
+      "description": "Use any strategy to determine if a user can vote.",
+      "invalidVoterMessage": "You do not meet the minimum balance requirement of {amount} {symbol} to vote on this proposal. "
+    },
+    "passport-gated": {
+      "label": "Gitcoin Passport gated",
+      "description": "Protect your proposals from spam and vote manipulation by requiring users to have a Gitcoin Passport.",
+      "invalidVoterMessage": "You need a Gitcoin Passport with {operator} of the following stamps to vote on this proposal: {stamps}. "
+    },
+    "passport-weighted": {
+      "label": "Gitcoin Passport weighted"
     }
   },
   "safeSnap": {
@@ -568,6 +695,7 @@
       "changeOutcome": "Change outcome",
       "executeTxs": "Execute transaction batch {0} of {1}",
       "executed": "All transactions have been executed",
+      "noTransactions": "There are no transactions to execute",
       "rejected": "Proposal rejected",
       "error": "Something went wrong",
       "connectWallet": "Connect wallet to see execution details",
@@ -575,7 +703,18 @@
       "question": "Did this proposal pass and does it meet the",
       "criteria": "acceptance criteria?",
       "proposalPassed": "Did the proposal pass?",
-      "expired": "The proposal has expired"
+      "expired": "The proposal has expired",
+      "approveBond": "Approve bond",
+      "confirmVoteResults": "Click to request proposal execution",
+      "executeTxsUma": "Execute transaction batch",
+      "deleteDisputedProposal": "Delete disputed proposal",
+      "confirmVoteResultsToolTip": "Make sure this proposal was approved by this Snapshot vote before proposing on-chain. If the Snapshot vote rejected the proposal, the on-chain proposal will be rejected as well and you will lose your bond.",
+      "approveBondToolTip": "On-chain proposals require a bond from the proposer. This will approve tokens from your wallet to be posted as a bond. If you make an invalid proposal, it will be disputed and you will lose your bond. If the proposal is valid, your bond will be returned when the transactions are executed.",
+      "executeToolTip": "This will execute the transactions from this proposal and return the proposer's bond.",
+      "bondWarning": "Bond is greater than users balance",
+      "requiredBond": "Required Bond:",
+      "challengePeriod": "Challenge Period:",
+      "disputeProposal": "UMA Oracle URL to dispute"
     }
   },
   "poap": {
@@ -588,6 +727,24 @@
     "button_show": "Browse collection",
     "success_claim": "The POAP has been minted to your collection",
     "error_claim": "There was a problem minting the token"
+  },
+  "progress": {
+    "progress": "Progress",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "complete": "Complete",
+    "newStep": "New Step",
+    "description": "Description",
+    "add": "Add",
+    "deleteStep": "Delete Step",
+    "deleteConfirm": "Are you sure you want to delete?",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "comeBack": "Come back after voting is complete to see how this proposal is progressing!",
+    "confirmSignature": "Signing this message will allow us to authorize your request to update the progress of your proposal.",
+    "wentWrong": "Oops something went wrong.",
+    "voting": "Voting",
+    "soon": "Soon"
   },
   "charts": {
     "charts": "Charts",
@@ -620,24 +777,48 @@
     "reply": "Reply",
     "load_more": "Load more"
   },
-  "page": {
-    "title": {
-      "home": "Snapshot",
-      "setup": "Create a space",
-      "timeline": "Timeline",
-      "notifications": "Notifications",
-      "explore": "Explore",
-      "playground": "Playground",
-      "space": {
-        "create": "Create {space} proposal",
-        "about": "About {space}",
-        "proposals": "{space} Proposals",
-        "proposal": "{space} proposal: {proposal}",
-        "settings": "{space} Settings"
+  "metaInfo": {
+    "home": {
+      "title": "Snapshot - Where decisions get made",
+      "description": "Snapshot is an off-chain voting platform that allows DAOs, DeFi protocols, or NFT communities to participate in the decentralized governance easily and without gas fees."
+    },
+    "setup": {
+      "title": "Create a space",
+      "description": "Snapshot is a free, open-source platform for community governance. Create your own space now and start making decisions!"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "description": "See what's happening in the Snapshot community."
+    },
+    "playground": {
+      "title": "Playground",
+      "description": "{strategy}"
+    },
+    "strategy": {
+      "title": "{strategy} strategy",
+      "description": ""
+    },
+    "space": {
+      "create": {
+        "title": "{space} Create proposal",
+        "description": "Create a proposal and start a vote."
       },
-      "strategy": "{key} strategy",
-      "delegate": "Delegate",
-      "ranking": "Ranking"
+      "about": {
+        "title": "{space} About ",
+        "description": "{about}"
+      },
+      "proposals": {
+        "title": "{space} Proposals",
+        "description": "{about}"
+      },
+      "proposal": {
+        "title": "{space} Proposal: {proposal}",
+        "description": "{body}"
+      },
+      "settings": {
+        "title": "{space} Settings",
+        "description": "Change how proposals and voting works in this space."
+      }
     }
   },
   "hal": {
@@ -691,7 +872,7 @@
     "about": "About",
     "blog": "Blog",
     "jobs": "Jobs",
-    "discussions": "Discussions",
+    "faqs": "FAQs",
     "github": "GitHub",
     "docs": "Docs",
     "support": "Support",

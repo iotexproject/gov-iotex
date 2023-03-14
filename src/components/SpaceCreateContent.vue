@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useIntl, useImageUpload, useSpaceCreateForm } from '@/composables';
+import { useIntl, useImageUpload, useFormSpaceProposal } from '@/composables';
+import { ExtendedSpace } from '@/helpers/interfaces';
 
 defineProps<{
+  space: ExtendedSpace;
   preview: boolean;
   bodyLimit: number;
 }>();
 
 const { formatNumber } = useIntl();
-const { form, getValidation } = useSpaceCreateForm();
+const { form, getValidation } = useFormSpaceProposal();
 
 const imageDragging = ref(false);
 const textAreaEl = ref<HTMLTextAreaElement | null>(null);
@@ -46,8 +48,14 @@ const handleDrop = e => {
 </script>
 
 <template>
-  <div class="px-4 md:px-0">
+  <div class="mb-5 px-4 md:px-0">
     <div class="flex flex-col space-y-3">
+      <BlockLink
+        v-if="space?.guidelines"
+        :title="$t('settings.proposal.guidelines.title')"
+        :link="space.guidelines"
+      />
+
       <h1
         v-if="preview"
         class="w-full break-all"
@@ -60,6 +68,7 @@ const handleDrop = e => {
         :max-length="128"
         :error="getValidation('name')"
         focus-on-mount
+        data-testid="input-proposal-title"
       />
 
       <div v-if="!preview">
@@ -85,6 +94,7 @@ const handleDrop = e => {
               v-model="form.body"
               class="s-input mt-0 h-full min-h-[240px] w-full !rounded-xl border-none pt-0 text-base"
               :maxlength="bodyLimit"
+              data-testid="input-proposal-body"
               @paste="handlePaste"
             />
           </div>
@@ -133,6 +143,7 @@ const handleDrop = e => {
         placeholder="https://forum.balancer.fi/proposal"
         :title="$t('create.discussion')"
         :error="getValidation('discussion')"
+        data-testid="input-proposal-discussion"
       />
     </div>
   </div>

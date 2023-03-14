@@ -1,5 +1,6 @@
-Fixes Issue #
+Fixes #
 
-Changes in this PR:
+## Changes
 
-How to test and review this PR?
+## How to test
+

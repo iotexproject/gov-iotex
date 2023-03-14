@@ -1,12 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { shorten } from '@/helpers/utils';
 
-import { useScrollMonitor, useSpaces, useIntl, useI18n } from '@/composables';
+import { useScrollMonitor, useSpaces, useIntl } from '@/composables';
 
 const { orderedSpacesByCategory, spacesLoaded } = useSpaces();
 const { formatCompactNumber } = useIntl();
-const { setPageTitle } = useI18n();
 
 const loadBy = 12;
 const limit = ref(loadBy);
@@ -23,15 +22,10 @@ const { endElement } = useScrollMonitor(() => {
     limit.value += loadBy;
   }
 });
-
-onMounted(() => {
-  setPageTitle('page.title.home');
-});
 </script>
 
 <template>
   <div class="relative">
-    <TheHeader />
     <BaseContainer
       class="mb-4 flex flex-col flex-wrap items-center xs:flex-row md:flex-nowrap"
     >
