@@ -78,7 +78,7 @@ watch(
     @click="showSidebar = false"
   >
     <div v-if="!domain" class="relative flex items-center px-2">
-      <router-link to="/?network=4689">
+      <router-link to="/">
         <ButtonSidebar class="!border-0">
           <BaseIcon size="36" name="snapshot" class="text-snapshot" />
         </ButtonSidebar>

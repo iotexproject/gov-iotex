@@ -33,9 +33,7 @@ const titleStyle = isXSmallScreen
               style="line-height: 20px"
               :style="titleStyle"
             >
-              <router-link to="/?network=4689">
-                IoTeX Governance Portal
-              </router-link>
+              <router-link to="/"> IoTeX Governance Portal </router-link>
               <br />
               <span style="color: gray; font-size: 1.125rem">
                 powered by
