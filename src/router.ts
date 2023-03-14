@@ -87,7 +87,12 @@ const profileRoutes = [
 // E.g. /balancer/proposal/:proposalId becomes /proposal/:proposalId
 if (domain) {
   routes.push(
-    { path: '/', name: 'home', component: SpaceView, children: spaceRoutes },
+    {
+      path: '/',
+      name: 'home',
+      component: SpaceView,
+      children: spaceRoutes
+    },
     { path: '/delegate/:key?/:to?', name: 'delegate', component: DelegateView },
     {
       path: `/${domain}`,
@@ -106,7 +111,11 @@ if (domain) {
   // If accessed through localhost or snapshot.org, add all routes and
   // prefix space routes with space domain (/:key).
   routes.push(
-    { path: '/', name: 'home', component: ExploreView },
+    {
+      path: '/',
+      name: 'home',
+      component: ExploreView
+    },
     { path: '/about', name: 'about', component: AboutView },
     {
       path: '/setup/:ens?',

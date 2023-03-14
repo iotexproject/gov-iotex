@@ -1,13 +1,18 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useApp } from '@/composables/useApp';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const { domain } = useApp();
 const { init, isReady, showSidebar } = useApp();
 const route = useRoute();
+const router = useRouter();
+const { network } = route.query;
 
-onMounted(async () => init());
+onMounted(async () => {
+  init();
+  if (!network) router.push('/?network=4689');
+});
 </script>
 
 <template>

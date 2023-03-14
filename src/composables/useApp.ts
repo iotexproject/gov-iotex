@@ -54,6 +54,7 @@ export function useApp() {
     await getSkin(domain);
     isReady.value = true;
     getSpaces();
+    console.log('init', domain);
     connectWallet();
   }
 
