@@ -27,20 +27,16 @@ const titleStyle = isXSmallScreen
           <ButtonSidebar class="sm:hidden" @click="showSidebar = !showSidebar">
             <i-ho-dots-vertical class="text-skin-link" />
           </ButtonSidebar>
-          <!-- <router-link
-            :to="{ path: '/' }"
-            class="-ml-3 hidden items-center sm:block"
-            style="font-size: 24px"
-          >
-            snapshot
-          </router-link> -->
           <div class="d-flex flex-items-center flex-auto">
             <p
               class="d-inline-block d-flex flex-items-center"
               style="line-height: 20px"
               :style="titleStyle"
             >
-              <a href="/"> IoTeX Governance Portal </a><br />
+              <router-link to="/?network=4689">
+                IoTeX Governance Portal
+              </router-link>
+              <br />
               <span style="color: gray; font-size: 1.125rem">
                 powered by
                 <a
