@@ -111,5 +111,8 @@
     "axios": "^0.21.1"
   },
   "license": "MIT",
-  "repository": "snapshot-labs/snapshot"
+  "repository": "snapshot-labs/snapshot",
+  "engines": {
+    "node": ">=16.14.0"
+  }
 }

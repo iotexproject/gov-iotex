@@ -32,7 +32,7 @@ export function useSpaces() {
           first: 12,
           private: false,
           search: variables.search || undefined,
-          network: variables.network || undefined,
+          network: '4689',
           category: variables.category || undefined
         }
       },
@@ -45,7 +45,6 @@ export function useSpaces() {
     loadingSpacesHome.value = true;
     try {
       const response = await _fetchRankedSpaces(variables);
-
       if (!response) return;
 
       spacesHome.value = response.items || [];
