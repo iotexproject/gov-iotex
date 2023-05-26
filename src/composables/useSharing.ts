@@ -1,5 +1,3 @@
-import { useI18n } from '@/composables/useI18n';
-import { useCopy } from '@/composables/useCopy';
 import { useShare } from '@vueuse/core';
 import { ExtendedSpace, Proposal } from '@/helpers/interfaces';
 
@@ -77,16 +75,16 @@ export function useSharing() {
       )}"%20${encodedProposalUrl(
         payload.space.id,
         payload.proposal
-      )}&hashtags=snapshotlabs`;
+      )}&hashtags=Snapshot`;
     if (isSupported.value)
-      return `${votedText} "${payload.proposal.title}" ${spaceHandle} @SnapshotLabs`;
+      return `${votedText} "${payload.proposal.title}" ${spaceHandle} #Snapshot`;
     if (shareTo === 'twitter')
       return `${encodeURIComponent(votedText)}%20"${encodeURIComponent(
         payload.proposal.title
       )}"%20${encodedProposalUrl(
         payload.space.id,
         payload.proposal
-      )}%20${spaceHandle}%20@SnapshotLabs`;
+      )}%20${spaceHandle}%20%23Snapshot`;
 
     return `${votedText} "${payload.proposal.title}"`;
   }
@@ -107,7 +105,7 @@ export function useSharing() {
       `${encodeURIComponent(proposal.title)}%20${encodedProposalUrl(
         space.id,
         proposal
-      )}%20${handle}%20@SnapshotLabs`
+      )}%20${handle}%20%23Snapshot`
     );
   }
 
@@ -116,7 +114,7 @@ export function useSharing() {
       `${encodeURIComponent(proposal.title)}%20${encodedProposalUrl(
         space.id,
         proposal
-      )}&hashtags=snapshotlabs`
+      )}&hashtags=Snapshot`
     );
   }
 

@@ -1,5 +1,3 @@
-import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import namehash from '@ensdomains/eth-ens-namehash';
 import networks from '@snapshot-labs/snapshot.js/src/networks.json';
@@ -9,8 +7,6 @@ import {
   getEnsOwner,
   getSpaceController
 } from '@snapshot-labs/snapshot.js/src/utils';
-
-import { useI18n, useWeb3, useApp, useFlashNotification } from '@/composables';
 
 const spaceControllerInput = ref('');
 const modalUnsupportedNetworkOpen = ref(false);
@@ -49,7 +45,8 @@ export function useSpaceController() {
   async function setRecord() {
     settingENSRecord.value = true;
     try {
-      const ensPublicResolverAddress = networks[networkKey.value].ensResolver;
+      const ensResolvers = networks[networkKey.value].ensResolvers;
+      const ensPublicResolverAddress = ensResolvers[0];
       if (!ensPublicResolverAddress) {
         throw new Error('No ENS resolver address for this network');
       }
@@ -101,6 +98,7 @@ export function useSpaceController() {
     confirmSetRecord,
     ensAddress,
     loadEnsOwner,
+    ensOwner,
     isEnsOwner,
     loadSpaceController,
     spaceController,

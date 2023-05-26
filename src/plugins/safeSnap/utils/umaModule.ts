@@ -1,14 +1,13 @@
-import { ref } from 'vue';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { multicall } from '@snapshot-labs/snapshot.js/src/utils';
 import { UMA_MODULE_ABI, ERC20_ABI, UMA_ORACLE_ABI } from '../constants';
 import { Contract } from '@ethersproject/contracts';
 import { BigNumber } from '@ethersproject/bignumber';
-import { useWeb3 } from '@/composables';
 import { keccak256 } from '@ethersproject/keccak256';
 import { pack } from '@ethersproject/solidity';
 import { defaultAbiCoder } from '@ethersproject/abi';
 import { toUtf8Bytes, toUtf8String } from '@ethersproject/strings';
+import { pageEvents } from './events';
 
 const getBondDetailsUma = async (
   provider: StaticJsonRpcProvider,
@@ -67,24 +66,24 @@ export const getModuleDetailsUma = async (
   needsBondApproval: boolean;
   noTransactions: boolean;
   activeProposal: boolean;
-  proposalEvent: any;
+  assertionEvent: any;
   proposalExecuted: boolean;
   livenessPeriod: string;
 }> => {
   const moduleContract = new Contract(moduleAddress, UMA_MODULE_ABI, provider);
   const moduleDetails = await multicall(network, provider, UMA_MODULE_ABI, [
     [moduleAddress, 'avatar'],
-    [moduleAddress, 'optimisticOracle'],
+    [moduleAddress, 'optimisticOracleV3'],
     [moduleAddress, 'rules'],
     [moduleAddress, 'bondAmount'],
-    [moduleAddress, 'liveness'],
-    [moduleAddress, 'PROPOSAL_VALID_RESPONSE']
+    [moduleAddress, 'liveness']
   ]);
   let needsApproval = false;
-  const minimumBond = moduleDetails[3][0];
   const optimisticOracle = moduleDetails[1][0];
-  const bondDetails = await getBondDetailsUma(provider, moduleAddress);
+  const rules = moduleDetails[2][0];
+  const minimumBond = moduleDetails[3][0];
   const livenessPeriod = moduleDetails[4][0];
+  const bondDetails = await getBondDetailsUma(provider, moduleAddress);
 
   if (
     Number(minimumBond) > 0 &&
@@ -105,11 +104,22 @@ export const getModuleDetailsUma = async (
     );
 
     ancillaryData = pack(
-      ['string', 'bytes', 'bytes'],
+      ['string', 'bytes', 'bytes', 'bytes', 'bytes', 'bytes', 'bytes', 'bytes'],
       [
         '',
         pack(['string', 'string'], ['proposalHash', ':']),
-        toUtf8Bytes(proposalHash.replace('0x', ''))
+        toUtf8Bytes(proposalHash.replace(/^0x/, '')),
+        pack(
+          ['string', 'string', 'string', 'string'],
+          [',', 'explanation', ':', '"']
+        ),
+        toUtf8Bytes(explanation.replace(/^0x/, '')),
+        pack(
+          ['string', 'string', 'string', 'string', 'string'],
+          ['"', ',', 'rules', ':', '"']
+        ),
+        toUtf8Bytes(rules.replace(/^0x/, '')),
+        pack(['string'], ['"'])
       ]
     );
   } else {
@@ -127,16 +137,17 @@ export const getModuleDetailsUma = async (
       needsBondApproval: needsApproval,
       noTransactions: true,
       activeProposal: false,
-      proposalEvent: {},
+      assertionEvent: {},
       proposalExecuted: false,
       livenessPeriod: livenessPeriod
     };
   }
   // Check for active proposals
-  const proposalHashTimestamp = await moduleContract.proposalHashes(
-    proposalHash
-  );
-  const activeProposal = proposalHashTimestamp.gt(0);
+  const assertionId = await moduleContract.assertionIds(proposalHash);
+
+  const activeProposal =
+    assertionId !==
+    '0x0000000000000000000000000000000000000000000000000000000000000000';
 
   // Search for requests with matching ancillary data
   const oracleContract = new Contract(
@@ -145,41 +156,74 @@ export const getModuleDetailsUma = async (
     provider
   );
 
-  // TODO: Customize this block lookback based on chain and test with L2 network (Polygon)
-  const proposalEvents = await oracleContract.queryFilter(
-    oracleContract.filters.ProposePrice(moduleAddress)
-  );
+  const latestBlock = await provider.getBlock('latest');
+  // modify this per chain. this should be updated with constants for all chains. start block is og deploy block.
+  // this needs to be optimized to reduce loading time, currently takes a long time to parse 3k blocks at a time.
+  const oGstartBlock = network === '1' ? 17167414 : 0;
+  const oOStartBlock = network === '1' ? 16636058 : 0;
+  const maxRange = network === '1' ? 3000 : 10000;
 
-  const thisModuleProposalEvent = proposalEvents.filter(
-    event =>
-      event.args?.ancillaryData === ancillaryData &&
-      event.args?.timestamp.toString() === proposalHashTimestamp.toString()
-  );
+  const [assertionEvents, transactionsProposedEvents, executionEvents] =
+    await Promise.all([
+      pageEvents(
+        oOStartBlock,
+        latestBlock.number,
+        maxRange,
+        ({ start, end }: { start: number; end: number }) => {
+          return oracleContract.queryFilter(
+            oracleContract.filters.AssertionMade(assertionId),
+            start,
+            end
+          );
+        }
+      ),
+      // Check if this specific proposal has already been executed.
+      // note usage of pageEvents, which query only based on a limit number of blocks within a broader range
+      // this prevents block range too large errors.
+      pageEvents(
+        oGstartBlock,
+        latestBlock.number,
+        maxRange,
+        ({ start, end }: { start: number; end: number }) => {
+          return moduleContract.queryFilter(
+            moduleContract.filters.TransactionsProposed(),
+            start,
+            end
+          );
+        }
+      ),
+      pageEvents(
+        oGstartBlock,
+        latestBlock.number,
+        maxRange,
+        ({ start, end }: { start: number; end: number }) => {
+          return moduleContract.queryFilter(
+            moduleContract.filters.ProposalExecuted(proposalHash),
+            start,
+            end
+          );
+        }
+      )
+    ]);
+  const thisModuleAssertionEvent = assertionEvents.filter(event => {
+    return (
+      event.args?.claim === ancillaryData &&
+      event.args?.callbackRecipient === moduleAddress
+    );
+  });
 
-  // Get the full proposal events (with state and disputer).
-  const thisModuleFullProposalEvent = await Promise.all(
-    thisModuleProposalEvent.map(async event => {
+  // Get the full proposal events (with state).
+  const fullAssertionEvent = await Promise.all(
+    thisModuleAssertionEvent.map(async event => {
       return oracleContract
-        .getRequest(
-          event.args?.requester,
-          event.args?.identifier,
-          event.args?.timestamp,
-          event.args?.ancillaryData
-        )
+        .getAssertion(event.args?.assertionId)
         .then(result => {
-          const isDisputed =
-            result.disputer === '0x0000000000000000000000000000000000000000'
-              ? false
-              : true;
-
           const isExpired =
-            Math.floor(Date.now() / 1000) >=
-            Number(event.args?.expirationTimestamp);
+            Math.floor(Date.now() / 1000) >= Number(result.expirationTime);
 
           return {
-            expirationTimestamp: event.args?.expirationTimestamp,
+            expirationTimestamp: result.expirationTime,
             isExpired: isExpired,
-            isDisputed: isDisputed,
             isSettled: result.settled,
             proposalHash: proposalHash,
             proposalTxHash: event.transactionHash
@@ -188,30 +232,19 @@ export const getModuleDetailsUma = async (
     })
   );
 
-  // Check if this specific proposal has already been executed.
-  const transactionsProposedEvents = await moduleContract.queryFilter(
-    moduleContract.filters.TransactionsProposed()
-  );
-
   const thisProposalTransactionsProposedEvents =
     transactionsProposedEvents.filter(
       event => toUtf8String(event.args?.explanation) === explanation
     );
 
-  const executionEvents = await moduleContract.queryFilter(
-    moduleContract.filters.ProposalExecuted(proposalHash)
+  const assertion = thisProposalTransactionsProposedEvents.map(
+    tx => tx.args?.assertionId
   );
 
-  const proposalTimes = thisProposalTransactionsProposedEvents.map(tx =>
-    tx.args?.proposalTime.toString()
-  );
+  const assertionIds = executionEvents.map(tx => tx.args?.assertionId);
 
-  const executionTimes = executionEvents.map(tx =>
-    tx.args?.proposalTime.toString()
-  );
-
-  const proposalExecuted = proposalTimes.some(time =>
-    executionTimes.includes(time)
+  const proposalExecuted = assertion.some(assertionId =>
+    assertionIds.includes(assertionId)
   );
 
   return {
@@ -228,7 +261,7 @@ export const getModuleDetailsUma = async (
     needsBondApproval: needsApproval,
     noTransactions: false,
     activeProposal: activeProposal,
-    proposalEvent: thisModuleFullProposalEvent[0],
+    assertionEvent: fullAssertionEvent[0],
     proposalExecuted: proposalExecuted,
     livenessPeriod: livenessPeriod.toString()
   };

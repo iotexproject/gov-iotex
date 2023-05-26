@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useSpaces } from '@/composables/useSpaces';
 import { useMediaQuery } from '@vueuse/core';
+import { Space } from '@/helpers/interfaces';
 
 defineProps<{
-  spaces: string[];
+  spaces: Space[];
   title: string;
   message?: string;
   loading?: boolean;
 }>();
-
-const { spaces: spacesList } = useSpaces();
 
 const modalSpacesOpen = ref(false);
 
@@ -35,22 +32,20 @@ const numberOfSpacesByScreenSize = computed(() => {
 <template>
   <div>
     <BaseBlock :title="title" :counter="spaces.length" hide-bottom-border slim>
-      <div v-if="loading || spaces.length" class="border-t py-4 px-4">
+      <div v-if="loading || spaces.length" class="border-t px-4 py-4">
         <BlockSpacesListSkeleton
-          v-if="loading || !Object.keys(spacesList).length"
+          v-if="loading"
           :number-of-spaces="numberOfSpacesByScreenSize"
         />
+
         <div v-else class="flex justify-between">
           <div class="flex w-full overflow-x-hidden">
             <div
-              v-for="space in spaces.slice(0, numberOfSpacesByScreenSize)"
-              :key="space"
+              v-for="space in spaces"
+              :key="space.id"
               class="mx-2 min-w-[66px] max-w-[66px] text-center first:ml-0"
             >
-              <BlockSpacesListItem
-                v-if="spacesList?.[space]"
-                :space="spacesList[space]"
-              />
+              <BlockSpacesListItem :space="space" />
             </div>
           </div>
           <BlockSpacesListButtonMore
@@ -65,7 +60,7 @@ const numberOfSpacesByScreenSize = computed(() => {
     </BaseBlock>
     <teleport to="#modal">
       <ModalSpaces
-        :following-spaces="spaces"
+        :spaces="spaces"
         :open="modalSpacesOpen"
         @close="modalSpacesOpen = false"
       />

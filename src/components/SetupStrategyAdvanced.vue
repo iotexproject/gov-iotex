@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { useFormSpaceSettings } from '@/composables/useFormSpaceSettings';
-const { form, setDefaultStrategy } = useFormSpaceSettings('setup');
+const { validationErrors } = useFormSpaceSettings('setup');
 
 const emit = defineEmits(['next']);
 
 function nextStep() {
+  if (validationErrors.value.strategies) return;
   emit('next');
-  if (!form.value.strategies.length) return setDefaultStrategy();
 }
 </script>
 
@@ -18,10 +17,7 @@ function nextStep() {
       hide-error
     />
     <div class="mx-4 md:mx-0">
-      <SetupButtonNext
-        :text="form.strategies.length ? 'next' : 'skip'"
-        @click="nextStep"
-      />
+      <SetupButtonNext @click="nextStep" />
     </div>
   </div>
 </template>

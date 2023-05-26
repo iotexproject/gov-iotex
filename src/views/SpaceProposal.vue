@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { getProposal } from '@/helpers/snapshot';
 import { ExtendedSpace, Proposal } from '@/helpers/interfaces';
-
-import { useExtendedSpaces } from '@/composables';
 
 const props = defineProps<{ spaceKey: string }>();
 
@@ -15,7 +11,7 @@ const space = ref<ExtendedSpace | null>(null);
 const route = useRoute();
 const router = useRouter();
 
-const { loadExtendedSpaces, extendedSpaces } = useExtendedSpaces();
+const { loadExtendedSpace, extendedSpaces } = useExtendedSpaces();
 
 const proposalId = route.params.id as string;
 
@@ -34,7 +30,7 @@ async function loadProposal() {
   proposal.value = await getProposal(proposalId);
   if (!proposal.value) return router.push({ name: 'error-404' });
 
-  await loadExtendedSpaces([proposal.value.space.id]);
+  await loadExtendedSpace(proposal.value.space.id);
   space.value =
     extendedSpaces.value.find(
       space => space.id.toLowerCase() === proposal.value?.space.id.toLowerCase()
@@ -51,7 +47,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <TheLayout v-if="loadingProposal">
+    <TheLayout v-if="loadingProposal" :slim="false">
       <template #content-left>
         <LoadingPage />
       </template>

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import { useIntl } from '@/composables';
-
 const props = defineProps<{
   context: 'voting' | 'proposal';
   spaceId: string;
@@ -26,7 +22,7 @@ const tPath = computed(() => {
   <BaseMessageBlock level="warning">
     <template v-if="validationName === 'basic'">
       {{
-        $t(`${tPath}.basic.invalidVoterMessage`, {
+        $t(`${tPath}.basic.invalidMessage`, {
           amount: formatCompactNumber(minScore),
           symbol
         })
@@ -45,7 +41,7 @@ const tPath = computed(() => {
     >
       <template v-if="validationName === 'passport-gated'">
         {{
-          $t(`${tPath}.passport-gated.invalidVoterMessage`, {
+          $t(`${tPath}.passport-gated.invalidMessage`, {
             operator: validationParams?.operator === 'AND' ? 'all' : 'one',
             stamps: validationParams?.stamps.join(', ')
           })

@@ -8,7 +8,8 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     'eslint:recommended',
     '@vue/eslint-config-typescript/recommended',
-    '@vue/eslint-config-prettier'
+    '@vue/eslint-config-prettier',
+    '.eslintrc-auto-import.json'
   ],
   ignorePatterns: ['/node_modules/**/*.*'],
   parserOptions: {
@@ -30,6 +31,7 @@ module.exports = {
     $ref: 'readonly',
     defineProps: 'readonly',
     defineEmits: 'readonly',
-    withDefaults: 'readonly'
+    withDefaults: 'readonly',
+    defineExpose: 'readonly'
   }
 };

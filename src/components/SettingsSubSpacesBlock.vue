@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useFormSpaceSettings, useExtendedSpaces } from '@/composables';
 import { watchDebounced } from '@vueuse/core';
 
 const props = defineProps<{
   context: 'setup' | 'settings';
+  isViewOnly?: boolean;
 }>();
 
 const { form } = useFormSpaceSettings(props.context);
-const { loadExtendedSpaces, extendedSpaces } = useExtendedSpaces();
+const { loadExtendedSpace, extendedSpaces } = useExtendedSpaces();
 
 const lookingUpParent = ref(false);
 const foundParent = ref(false);
@@ -22,7 +21,7 @@ watchDebounced(
     if (!form.value.parent) return;
 
     lookingUpParent.value = true;
-    await loadExtendedSpaces([form.value.parent]);
+    await loadExtendedSpace(form.value.parent);
 
     const found = extendedSpaces.value?.some(
       space => space.id === form.value.parent
@@ -50,7 +49,7 @@ watchDebounced(
     if (!childInput.value) return;
 
     lookingUpChild.value = true;
-    await loadExtendedSpaces([childInput.value]);
+    await loadExtendedSpace(childInput.value);
 
     const found = extendedSpaces.value?.some(
       space => space.id === childInput.value
@@ -76,6 +75,7 @@ const addChild = () => {
 };
 
 const removeChild = (child: string) => {
+  if (props.isViewOnly) return;
   form.value.children = form.value.children.filter(c => c !== child);
 };
 </script>
@@ -98,7 +98,7 @@ const removeChild = (child: string) => {
       </BaseMessageBlock>
       <BaseInput
         v-model="form.parent"
-        :is-disabled="!!form.children?.length"
+        :is-disabled="!!form.children?.length || isViewOnly"
         :title="$t(`settings.subspaces.parent.label`)"
         :information="$t(`settings.subspaces.parent.information`)"
         :placeholder="$t('settings.subspaces.parent.placeholder')"
@@ -110,7 +110,7 @@ const removeChild = (child: string) => {
       <div class="flex items-end space-x-2">
         <BaseInput
           v-model="childInput"
-          :is-disabled="!!form.parent"
+          :is-disabled="!!form.parent || isViewOnly"
           :title="$t(`settings.subspaces.children.label`)"
           :information="$t(`settings.subspaces.children.information`)"
           :placeholder="$t('settings.subspaces.children.placeholder')"
@@ -118,7 +118,8 @@ const removeChild = (child: string) => {
           :failed="!!childInput && childNotFound"
         />
         <div>
-          <ButtonSidebar
+          <BaseButtonRound
+            :is-disabled="isViewOnly"
             class="!h-[42px] !w-[42px] whitespace-nowrap text-skin-link"
             :class="{
               'cursor-not-allowed !text-skin-text hover:border-skin-border':
@@ -127,7 +128,7 @@ const removeChild = (child: string) => {
             @click="addChild()"
           >
             <i-ho-plus class="text-sm" />
-          </ButtonSidebar>
+          </BaseButtonRound>
         </div>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -137,7 +138,11 @@ const removeChild = (child: string) => {
           class="flex gap-1 rounded-3xl py-1 pl-2 pr-1 text-sm text-white"
         >
           {{ child }}
-          <BaseButtonIcon class="p-0" @click="removeChild(child)">
+          <BaseButtonIcon
+            :is-disabled="isViewOnly"
+            class="!p-0"
+            @click="removeChild(child)"
+          >
             <i-ho-x class="text-xs text-white" />
           </BaseButtonIcon>
         </BasePill>

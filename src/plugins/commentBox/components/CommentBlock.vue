@@ -1,12 +1,6 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-import { useFlashNotification } from '@/composables/useFlashNotification';
-import { useModal } from '@/composables/useModal';
-import { useWeb3 } from '@/composables/useWeb3';
 import { signMessage } from '@snapshot-labs/snapshot.js/src/utils/web3';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
-import { useI18n } from '@/composables/useI18n';
-import { useIntl } from '@/composables/useIntl';
 import CommentBoxComment from './Comment.vue';
 import CommentBoxListReply from './ListReply.vue';
 
@@ -238,7 +232,7 @@ function deleteItemReply(key) {
     />
   </div>
   <div v-if="toggleEditComment">
-    <BaseBlock :slim="true" class="mt-2 mb-0 p-4 text-skin-text">
+    <BaseBlock :slim="true" class="mb-0 mt-2 p-4 text-skin-text">
       <div>
         <BaseUser
           :address="item.author"

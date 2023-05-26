@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, toRefs, computed } from 'vue';
 import { PluginIndex } from '@/helpers/interfaces';
-import { usePlugins } from '@/composables';
 
 const props = defineProps<{
   open: boolean;
@@ -72,9 +70,10 @@ watch(open, () => {
       v-if="!selectedPlugin?.key"
       v-model="searchInput"
       :placeholder="$t('searchPlaceholder')"
+      focus-on-mount
       modal
     />
-    <div class="my-4 mx-4 min-h-[300px]">
+    <div class="mx-4 my-4 min-h-[300px]">
       <div v-if="selectedPlugin?.key">
         <TextareaJson
           v-model="input"

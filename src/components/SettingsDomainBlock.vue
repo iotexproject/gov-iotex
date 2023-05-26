@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import schemas from '@snapshot-labs/snapshot.js/src/schemas';
-
-import { useFormSpaceSettings } from '@/composables';
 
 const props = defineProps<{
   context: 'setup' | 'settings';
+  isViewOnly?: boolean;
 }>();
 
-const { form, getValidation } = useFormSpaceSettings(props.context);
+const { form, validationErrors } = useFormSpaceSettings(props.context);
 
 const modalSkinsOpen = ref(false);
 </script>
@@ -26,17 +24,19 @@ const modalSkinsOpen = ref(false);
     </BaseMessageBlock>
 
     <ContainerParallelInput>
-      <BaseInput
+      <TuneInput
         v-model="form.domain"
-        :title="$t('settings.domain.label')"
-        :error="getValidation('domain')"
+        :label="$t('settings.domain.label')"
+        :error="validationErrors?.domain"
         :max-length="schemas.space.properties.domain.maxLength"
+        :disabled="isViewOnly"
         placeholder="e.g. vote.balancer.fi"
       />
 
-      <InputSelect
-        :title="$t(`settings.skin`)"
+      <TuneButtonSelect
+        :label="$t(`settings.skin`)"
         :model-value="form.skin ? form.skin : $t('defaultSkin')"
+        :disabled="isViewOnly"
         @select="modalSkinsOpen = true"
       />
     </ContainerParallelInput>

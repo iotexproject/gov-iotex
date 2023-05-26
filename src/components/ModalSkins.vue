@@ -1,7 +1,4 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useSkinsFilter } from '@/composables/useSkinsFilter';
-
 const props = defineProps({
   open: {
     type: Boolean,
@@ -36,9 +33,10 @@ function select(key) {
     <BaseSearch
       v-model="searchInput"
       :placeholder="$t('searchPlaceholder')"
+      focus-on-mount
       modal
     />
-    <div class="my-4 mx-0 min-h-[339px] md:mx-4">
+    <div class="mx-0 my-4 min-h-[339px] md:mx-4">
       <LoadingRow v-if="loadingSkins" block />
       <div v-else class="space-y-3">
         <div

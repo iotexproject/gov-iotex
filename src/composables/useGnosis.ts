@@ -1,5 +1,3 @@
-import { computed } from 'vue';
-import { useWeb3 } from '@/composables';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { ExtendedSpace } from '@/helpers/interfaces';
 
@@ -15,6 +13,7 @@ export function useGnosis(space?: ExtendedSpace) {
     () =>
       web3.value?.walletConnectType === 'Gnosis Safe Multisig' ||
       web3.value?.walletConnectType === 'WalletConnect Safe App' ||
+      web3.value?.walletConnectType === 'Den' ||
       connectorName.value === 'gnosis'
   );
 

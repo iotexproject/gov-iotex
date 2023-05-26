@@ -196,27 +196,10 @@ export default class Plugin {
       [moduleAddress, moduleDetails.minimumBond],
       {}
     );
-    yield 'erc20-approval';
+    yield approveTx;
     const approvalReceipt = await approveTx.wait();
     console.log('[DAO module] token transfer approved:', approvalReceipt);
     yield;
-  }
-
-  async *deleteDisputedProposalUma(
-    web3: any,
-    moduleAddress: string,
-    transactionHash: any
-  ) {
-    const tx = await sendTransaction(
-      web3,
-      moduleAddress,
-      UMA_MODULE_ABI,
-      'deleteDisputedProposal',
-      [transactionHash]
-    );
-    yield;
-    const receipt = await tx.wait();
-    console.log('[DAO module] deleted disputed proposal:', receipt);
   }
 
   async getModuleDetailsUma(
@@ -248,7 +231,7 @@ export default class Plugin {
       'addProposal',
       [proposalId, txHashes]
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log('[DAO module] submitted proposal:', receipt);
   }
@@ -268,7 +251,7 @@ export default class Plugin {
       [transactions, explanationBytes]
       // [[["0xB8034521BB1a343D556e5005680B3F17FFc74BeD", 0, "0", "0x"]], '0x']
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log('[DAO module] submitted proposal:', receipt);
   }
@@ -399,7 +382,7 @@ export default class Plugin {
         'withdraw',
         []
       );
-      yield;
+      yield withdrawTx;
       const withdrawReceipt = await withdrawTx.wait();
       console.log('[Realitio] executed withdraw:', withdrawReceipt);
       return;
@@ -412,7 +395,7 @@ export default class Plugin {
       'claimMultipleAndWithdrawBalance',
       [[questionId], ...claimParams]
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log(
       '[Realitio] executed claimMultipleAndWithdrawBalance:',
@@ -443,7 +426,7 @@ export default class Plugin {
         transactionIndex
       ]
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log('[DAO module] executed proposal:', receipt);
   }
@@ -460,7 +443,7 @@ export default class Plugin {
       'executeProposal',
       [transactions]
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log('[DAO module] executed proposal:', receipt);
   }
@@ -550,7 +533,7 @@ export default class Plugin {
       parameters,
       txOverrides
     );
-    yield;
+    yield tx;
     const receipt = await tx.wait();
     console.log('[DAO module] executed vote on oracle:', receipt);
   }

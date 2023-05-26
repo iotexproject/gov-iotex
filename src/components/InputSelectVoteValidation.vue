@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { VoteValidation } from '@/helpers/interfaces';
+import { VoteValidation, SpaceStrategy } from '@/helpers/interfaces';
 
 defineProps<{
   validation: VoteValidation;
+  votingStrategies: SpaceStrategy[];
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits(['add']);
@@ -12,18 +13,20 @@ const isModalOpen = ref(false);
 </script>
 
 <template>
-  <InputSelect
+  <TuneButtonSelect
     class="w-full"
-    :title="$t(`votingValidation.label`)"
-    :information="$t(`votingValidation.information`)"
+    :label="$t(`votingValidation.label`)"
+    :hint="$t(`votingValidation.information`)"
     :model-value="$t(`votingValidation.${validation.name}.label`)"
-    @click="isModalOpen = true"
+    :disabled="disabled"
+    @select="isModalOpen = true"
   />
 
   <teleport to="#modal">
     <ModalVoteValidation
       :open="isModalOpen"
       :validation="validation"
+      :voting-strategies="votingStrategies"
       @close="isModalOpen = false"
       @add="emit('add', $event)"
     />

@@ -1,32 +1,43 @@
 <script setup lang="ts">
-import { useApp, useWeb3, useTxStatus } from '@/composables';
-import { useMediaQuery } from '@vueuse/core';
-
-const { pendingCount } = useTxStatus();
+const { pendingTransactions, pendingTransactionsWithHash } = useTxStatus();
 const { env, showSidebar, domain } = useApp();
 const { web3Account } = useWeb3();
 
-const isXSmallScreen = useMediaQuery('(max-width: 768px)');
-const titleStyle = isXSmallScreen
-  ? { fontSize: '1.2rem' }
-  : { fontSize: '1.5rem' };
+const showDemoBanner = ref(true);
+const showPendingTransactionsModal = ref(false);
+
+watch(
+  () => pendingTransactionsWithHash.value.length === 0,
+  () => {
+    showPendingTransactionsModal.value = false;
+  }
+);
 </script>
 
 <template>
   <div
-    v-if="env === 'demo'"
-    class="bg-primary p-3 text-center"
+    v-if="env === 'demo' && showDemoBanner"
+    class="relative bg-primary p-3 text-center"
     style="color: white; font-size: 20px"
   >
     {{ $t('demoSite') }}
+    <BaseButtonIcon
+      class="absolute right-3 top-[10px]"
+      @click="showDemoBanner = false"
+    >
+      <i-ho-x />
+    </BaseButtonIcon>
   </div>
   <div>
     <BaseContainer class="pl-0 pr-3 sm:!px-4">
       <div class="flex items-center py-[12px]">
         <div class="ml-3 flex flex-auto items-center">
-          <ButtonSidebar class="sm:hidden" @click="showSidebar = !showSidebar">
+          <BaseButtonRound
+            class="sm:hidden"
+            @click="showSidebar = !showSidebar"
+          >
             <i-ho-dots-vertical class="text-skin-link" />
-          </ButtonSidebar>
+          </BaseButtonRound>
           <div class="d-flex flex-items-center flex-auto">
             <p
               class="d-inline-block d-flex flex-items-center"
@@ -59,10 +70,27 @@ const titleStyle = isXSmallScreen
     </BaseContainer>
   </div>
   <div
-    v-if="pendingCount > 0"
-    class="flex justify-center bg-primary py-2 text-center text-white"
+    v-if="pendingTransactions.length > 0"
+    class="flex flex-row items-center justify-center gap-x-3 bg-primary py-2 text-center text-white"
+    :class="{
+      'cursor-pointer': pendingTransactions.length > 0
+    }"
+    @click="
+      pendingTransactionsWithHash.length
+        ? (showPendingTransactionsModal = true)
+        : null
+    "
   >
-    <LoadingSpinner fill-white class="mr-2" />
-    {{ $tc('delegate.pendingTransaction', pendingCount) }}
+    <LoadingSpinner fill-white class="mb-1" />
+    <span>
+      {{ $t('setup.pendingTransactions') }}:
+      {{ pendingTransactions.length }}
+    </span>
   </div>
+  <Teleport to="#modal">
+    <ModalPendingTransactions
+      :open="showPendingTransactionsModal"
+      @close="showPendingTransactionsModal = false"
+    />
+  </Teleport>
 </template>

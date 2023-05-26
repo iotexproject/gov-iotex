@@ -1,14 +1,7 @@
 <script setup>
-import { ref, toRef, watch } from 'vue';
 import { clone } from '@snapshot-labs/snapshot.js/src/utils';
 import { signMessage } from '@snapshot-labs/snapshot.js/src/utils/web3';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
-import {
-  useModal,
-  useWeb3,
-  useI18n,
-  useFlashNotification
-} from '@/composables';
 
 const { t } = useI18n();
 const auth = getInstance();
@@ -197,7 +190,7 @@ watch([closeModal], () => {
     <BaseBlock
       v-if="!togglePreview"
       slim="true"
-      class="h6 mt-2 mb-0 p-4 text-skin-text"
+      class="h6 mb-0 mt-2 p-4 text-skin-text"
     >
       <div>{{ comment }}</div>
     </BaseBlock>

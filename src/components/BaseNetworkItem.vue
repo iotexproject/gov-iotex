@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useIntl } from '@/composables/useIntl';
-import { useNetworksFilter } from '@/composables/useNetworksFilter';
 import { getIpfsUrl } from '@/helpers/utils';
 
 const { formatCompactNumber } = useIntl();
@@ -13,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-  <BaseBlock class="cursor-pointer hover:border-skin-text">
+  <BaseBlock>
     <div class="mb-3 flex items-start">
       <BaseAvatar class="mr-2" :src="getIpfsUrl(network.logo)" size="28" />
       <div class="overflow-hidden">

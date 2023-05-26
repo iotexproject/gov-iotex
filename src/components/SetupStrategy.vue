@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useFormSpaceSettings } from '@/composables';
-
 const emit = defineEmits(['next', 'back']);
 
 enum Step {
@@ -12,13 +9,6 @@ enum Step {
 }
 
 const votingStep = ref(Step.CHOOSE);
-
-const { form, setDefaultStrategy } = useFormSpaceSettings('setup');
-
-function nextStep() {
-  emit('next');
-  if (!form.value.strategies.length) return setDefaultStrategy();
-}
 </script>
 
 <template>
@@ -49,13 +39,6 @@ function nextStep() {
         >
           {{ $t('setup.strategy.advanced.description') }}
         </ButtonCard>
-      </div>
-
-      <div class="px-4 md:px-0">
-        <SetupButtonNext
-          :text="form.strategies.length ? 'Keep current settings' : 'skip'"
-          @click="nextStep"
-        />
       </div>
     </div>
     <SetupStrategyVote

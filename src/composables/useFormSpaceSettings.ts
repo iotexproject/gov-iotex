@@ -1,11 +1,9 @@
-import { ref, computed } from 'vue';
 import { clone } from '@snapshot-labs/snapshot.js/src/utils';
 import schemas from '@snapshot-labs/snapshot.js/src/schemas';
-import { useClient, useFormValidation, useImageUpload } from '@/composables';
 import { ExtendedSpace } from '@/helpers/interfaces';
-
-const { isSending } = useClient();
-const { isUploadingImage } = useImageUpload();
+import isEqual from 'lodash/isEqual';
+import isEmpty from 'lodash/isEmpty';
+import { validateForm } from '@/helpers/validation';
 
 const DEFAULT_PROPOSAL_VALIDATION = { name: 'any', params: {} };
 const DEFAULT_VOTE_VALIDATION = { name: 'any', params: {} };
@@ -53,9 +51,12 @@ const EMPTY_SPACE_FORM = {
 const formSetup = ref(clone(EMPTY_SPACE_FORM));
 const formSettings = ref(clone(EMPTY_SPACE_FORM));
 const initialFormState = ref(clone(EMPTY_SPACE_FORM));
-const showAllValidationErrors = ref(false);
+const inputRefs = ref<any[]>([]);
 
 export function useFormSpaceSettings(context: 'setup' | 'settings') {
+  const { isSending } = useClient();
+  const { isUploadingImage } = useImageUpload();
+
   const form = computed({
     get: () => (context === 'setup' ? formSetup.value : formSettings.value),
     set: newVal =>
@@ -64,13 +65,45 @@ export function useFormSpaceSettings(context: 'setup' | 'settings') {
         : (formSettings.value = newVal)
   });
 
+  const hasFormChanged = computed(() => {
+    return !isEqual(formSettings.value, initialFormState.value);
+  });
+
+  const prunedForm = computed(() => {
+    const formData = clone(form.value);
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value === null || value === '') delete formData[key];
+    });
+    return formData;
+  });
+
   function populateForm(extendedSpace: ExtendedSpace) {
     const formData = clone(extendedSpace);
+    removeUnnecessaryFields(formData);
+    ensureDefaultValues(formData);
+
+    if (shouldUseAnyValidation(formData)) {
+      formData.validation.name = 'any';
+    }
+
+    if (shouldUseBasicValidation(formData)) {
+      formData.validation.name = 'basic';
+    }
+
+    form.value = clone(formData);
+    initialFormState.value = clone(formData);
+  }
+
+  function removeUnnecessaryFields(formData: any) {
     delete formData.id;
     delete formData.followersCount;
+    delete formData.verified;
+    delete formData.flagged;
 
     if (formData.filters.invalids) delete formData.filters.invalids;
+  }
 
+  function ensureDefaultValues(formData: any) {
     formData.strategies = formData.strategies || [];
     formData.plugins = formData.plugins || {};
     formData.validation =
@@ -79,68 +112,90 @@ export function useFormSpaceSettings(context: 'setup' | 'settings') {
       formData.voteValidation || clone(DEFAULT_VOTE_VALIDATION);
     formData.filters = formData.filters || {};
     formData.voting = formData.voting || {};
-    formData.voting.delay = formData.voting?.delay || undefined;
-    formData.voting.period = formData.voting?.period || undefined;
-    formData.voting.type = formData.voting?.type || undefined;
-    formData.voting.quorum = formData.voting?.quorum || undefined;
-    formData.voting.privacy = formData.voting?.privacy || undefined;
-    formData.children = formData.children.map(child => child.id) || [];
-    formData.parent = formData.parent?.id || '';
-
-    form.value = formData;
-    initialFormState.value = clone(formData);
-  }
-
-  function pruneForm(formData) {
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value === null || value === '') delete formData[key];
-    });
-    return formData;
-  }
-
-  const { getValidationMessage, validationResult, isValid } = useFormValidation(
-    schemas.space,
-    computed(() => pruneForm(form.value))
-  );
-
-  function getValidation(field: string): { message: string; push: boolean } {
-    const message = getValidationMessage(field);
-    return {
-      message: message || '',
-      push: showAllValidationErrors.value
+    formData.voting = {
+      ...formData.voting,
+      delay: formData.voting.delay || undefined,
+      period: formData.voting.period || undefined,
+      type: formData.voting.type || undefined,
+      quorum: formData.voting?.quorum || undefined,
+      privacy: formData.voting.privacy || undefined
     };
+    formData.children = formData.children
+      ? formData.children.map((child: any) => child.id)
+      : [];
+    formData.parent = formData.parent?.id || '';
   }
+
+  function shouldUseAnyValidation(formData: any) {
+    return (
+      formData.validation.name === 'basic' &&
+      !formData.filters.minScore &&
+      !formData.validation.params.minScore &&
+      isEmpty(formData.validation.params)
+    );
+  }
+
+  function shouldUseBasicValidation(formData: any) {
+    return (
+      formData.validation.name === 'nouns' ||
+      formData.validation.name === 'aave'
+    );
+  }
+
+  function validateStrategies(errors: any) {
+    const isTicket = form.value.strategies.some(
+      (strategy: any) => strategy.name === 'ticket'
+    );
+    const isAnyOrBasic =
+      form.value.voteValidation.name === 'any' ||
+      form.value.voteValidation.name === 'basic';
+
+    if (isTicket && isAnyOrBasic) {
+      errors.strategies = 'ticketWithAnyOrBasicError';
+    }
+  }
+
+  const validationErrors = computed(() => {
+    const errors = validateForm(schemas.space, prunedForm.value);
+
+    validateStrategies(errors);
+
+    return errors;
+  });
+
+  const isValid = computed(() => {
+    return Object.values(validationErrors.value).length === 0;
+  });
 
   const isReadyToSubmit = computed(
-    () => !isUploadingImage.value && !isSending.value && isValid.value
+    () => !isUploadingImage.value && !isSending.value
   );
 
   function resetForm() {
     form.value = clone(initialFormState.value);
-    showAllValidationErrors.value = false;
   }
 
-  function setDefaultStrategy() {
-    form.value.strategies = [];
-    form.value.strategies.push({
-      name: 'ticket',
-      network: '1',
-      params: {
-        symbol: 'VOTE'
-      }
+  function forceShowError() {
+    inputRefs?.value?.forEach((ref: any) => {
+      if (ref?.forceShowError) ref?.forceShowError();
     });
-    form.value.symbol = 'VOTE';
+  }
+
+  function addRef(ref: any) {
+    if (ref) inputRefs.value.push(ref);
   }
 
   return {
     form,
-    validationResult,
+    prunedForm,
+    validationErrors,
     isValid,
     isReadyToSubmit,
-    showAllValidationErrors,
+    hasFormChanged,
     populateForm,
-    getValidation,
     resetForm,
-    setDefaultStrategy
+    addRef,
+    forceShowError,
+    DEFAULT_VOTE_VALIDATION
   };
 }

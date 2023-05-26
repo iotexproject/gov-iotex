@@ -1,19 +1,7 @@
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { sleep } from '@snapshot-labs/snapshot.js/src/utils';
 import { useStorage } from '@vueuse/core';
 import { clearStampCache } from '@/helpers/utils';
-
-import {
-  useWeb3,
-  useI18n,
-  useClient,
-  useExtendedSpaces,
-  useFormSpaceSettings,
-  useFlashNotification,
-  useMeta
-} from '@/composables';
 
 useMeta({
   title: {
@@ -36,19 +24,18 @@ const route = useRoute();
 const router = useRouter();
 const { web3Account } = useWeb3();
 const { notify } = useFlashNotification();
-const { form, isValid, showAllValidationErrors, resetForm } =
-  useFormSpaceSettings('setup');
+const { prunedForm, isValid, resetForm } = useFormSpaceSettings('setup');
 const { t } = useI18n();
 const { send } = useClient();
-const { loadExtendedSpaces, extendedSpaces } = useExtendedSpaces();
+const { loadSpaces, spaces } = useSpaces();
 
 const creatingSpace = ref(false);
 
 const currentStep = computed(() => Number(route.query.step));
 
 async function checkIfSpaceExists() {
-  await loadExtendedSpaces([route.params.ens as string]);
-  if (extendedSpaces.value?.some(space => space.id === route.params.ens)) {
+  await loadSpaces([route.params.ens as string]);
+  if (spaces.value?.some(space => space.id === route.params.ens)) {
     return;
   } else {
     await sleep(5000);
@@ -58,13 +45,16 @@ async function checkIfSpaceExists() {
 
 async function handleSubmit() {
   if (!isValid.value) {
-    showAllValidationErrors.value = true;
     return;
   }
   creatingSpace.value = true;
 
   // Create the space
-  const result = await send({ id: route.params.ens }, 'settings', form.value);
+  const result = await send(
+    { id: route.params.ens },
+    'settings',
+    prunedForm.value
+  );
   if (result.id) {
     // Wait for the space to be available on the HUB
     await checkIfSpaceExists();
@@ -137,19 +127,19 @@ onMounted(() => {
         <SetupDomain v-if="currentStep === Step.ENS" @next="nextStep" />
 
         <SetupProfile
-          v-else-if="currentStep === Step.PROFILE && route.params.ens"
+          v-if="currentStep === Step.PROFILE && route.params.ens"
           @next="nextStep"
           @back="previousStep"
         />
 
         <SetupStrategy
-          v-else-if="currentStep === Step.STRATEGY && route.params.ens"
+          v-show="currentStep === Step.STRATEGY && route.params.ens"
           @next="nextStep"
           @back="previousStep"
         />
 
         <SetupExtras
-          v-else-if="currentStep === Step.EXTRAS && route.params.ens"
+          v-if="currentStep === Step.EXTRAS && route.params.ens"
           :creating-space="creatingSpace"
           @back="previousStep"
           @next="handleSubmit"

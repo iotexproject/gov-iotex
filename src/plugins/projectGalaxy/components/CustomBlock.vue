@@ -1,6 +1,5 @@
 <script>
 import Plugin from '../index';
-import { useWeb3 } from '@/composables/useWeb3';
 
 const { web3Account } = useWeb3();
 
@@ -53,7 +52,7 @@ const CLAIMING = 'CLAIMING';
 const CLAIMED = 'CLAIMED';
 
 export default {
-  props: ['space', 'proposal', 'results', 'loaded', 'strategies', 'votes'],
+  props: ['space', 'proposal', 'results', 'loaded', 'strategies'],
   data() {
     return {
       disabled: false,
@@ -107,12 +106,6 @@ export default {
       // Update the state if the address
       this.loading = true;
       this.address = newAccount;
-      await this.updateState();
-      this.loading = false;
-    },
-    votes: async function () {
-      // Update the state if the votes change
-      this.loading = true;
       await this.updateState();
       this.loading = false;
     }
@@ -209,14 +202,14 @@ export default {
   >
     <div class="relative overflow-hidden">
       <!-- background image -->
-      <div class="absolute bottom-0 top-0 right-0 left-0 z-0 w-full blur-3xl">
+      <div class="absolute bottom-0 left-0 right-0 top-0 z-0 w-full blur-3xl">
         <img
           :src="mainImg"
           alt=""
-          class="absolute bottom-0 top-0 right-0 left-0 z-0 w-full"
+          class="absolute bottom-0 left-0 right-0 top-0 z-0 w-full"
         />
         <div
-          class="absolute bottom-0 top-0 right-0 left-0 z-0 w-full"
+          class="absolute bottom-0 left-0 right-0 top-0 z-0 w-full"
           :style="{
             background:
               'linear-gradient(180deg, #211f24 0%, rgba(33, 31, 36, 0) 51.04%, #211f24 100%)'
@@ -225,7 +218,7 @@ export default {
       </div>
       <!-- main content -->
       <div
-        class="relative bottom-0 top-0 right-0 left-0 z-10 flex flex-col items-center py-6 px-6"
+        class="relative bottom-0 left-0 right-0 top-0 z-10 flex flex-col items-center px-6 py-6"
       >
         <img :src="imgLogoGalaxy" alt="" class="mb-4 h-3 w-auto" style="" />
         <img

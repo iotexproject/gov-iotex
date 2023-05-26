@@ -1,33 +1,36 @@
 <script setup lang="ts">
 import schemas from '@snapshot-labs/snapshot.js/src/schemas';
-import { useFormSpaceSettings } from '@/composables';
 
 const props = defineProps<{
   context: 'setup' | 'settings';
+  isViewOnly?: boolean;
 }>();
 
-const { form, getValidation } = useFormSpaceSettings(props.context);
+const { form, validationErrors, addRef } = useFormSpaceSettings(props.context);
 </script>
 
 <template>
   <BaseBlock :title="$t('settings.proposal.title')">
     <div class="space-y-2">
-      <InputUrl
+      <TuneInputUrl
+        :ref="addRef"
         v-model="form.guidelines"
-        :title="$t('settings.proposal.guidelines.title')"
-        :information="$t('settings.proposal.guidelines.information')"
+        :label="$t('settings.proposal.guidelines.title')"
+        :hint="$t('settings.proposal.guidelines.information')"
         placeholder="e.g. https://example.com/guidelines"
-        :error="getValidation('guidelines')"
+        :error="validationErrors?.guidelines"
         :max-length="schemas.space.properties.guidelines.maxLength"
+        :disabled="isViewOnly"
       />
 
-      <TextareaAutosize
+      <TuneTextarea
         v-model="form.template"
         class="input"
-        :title="$t('settings.proposal.template.title')"
-        :information="$t('settings.proposal.template.information')"
+        :label="$t('settings.proposal.template.title')"
+        :hint="$t('settings.proposal.template.information')"
         :placeholder="`## Intro\n## Body\n## Conclusion`"
         :max-length="schemas.space.properties.template.maxLength"
+        :disabled="isViewOnly"
       />
     </div>
   </BaseBlock>

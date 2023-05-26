@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import { clone } from '@snapshot-labs/snapshot.js/src/utils';
-import { useFormSpaceSettings } from '@/composables';
 
 const props = defineProps<{
   context: 'setup' | 'settings';
+  isViewOnly?: boolean;
 }>();
 
 const { form } = useFormSpaceSettings(props.context);
@@ -19,46 +18,33 @@ function handleClickSelectValidation() {
   if (form.value.filters.onlyMembers) return;
   modalValidationOpen.value = true;
 }
-
-onMounted(() => {
-  // This is a fix for older settings where the validation is set to basic but the minScore is not set
-  // Which is equal to any
-  if (form.value.validation.name === 'basic' && !form.value.filters.minScore) {
-    form.value.validation.name = 'any';
-  }
-  // This is a fix for the depricated validation types nouns and aave
-  if (
-    form.value.validation.name === 'nouns' ||
-    form.value.validation.name === 'aave'
-  ) {
-    form.value.validation.name = 'basic';
-  }
-});
 </script>
 
 <template>
   <BaseBlock :title="$t('settings.proposalValidation')">
     <div class="space-y-2">
       <ContainerParallelInput>
-        <InputSelect
+        <TuneButtonSelect
           class="w-full"
-          :title="$t(`proposalValidation.label`)"
-          :information="$t(`proposalValidation.information`)"
+          :label="$t(`proposalValidation.label`)"
+          :hint="$t(`proposalValidation.information`)"
           :model-value="$t(`proposalValidation.${form.validation.name}.label`)"
-          :disabled="form.filters.onlyMembers"
-          @click="handleClickSelectValidation"
+          :disabled="form.filters.onlyMembers || isViewOnly"
+          @select="handleClickSelectValidation"
         />
       </ContainerParallelInput>
 
-      <InputSwitch
+      <TuneSwitch
         v-model="form.filters.onlyMembers"
-        :text-right="$t('settings.allowOnlyAuthors')"
+        :disabled="isViewOnly"
+        :label="$t('settings.allowOnlyAuthors')"
       />
     </div>
     <teleport to="#modal">
       <ModalValidation
         :open="modalValidationOpen"
         :validation="form.validation"
+        :voting-strategies="form.strategies"
         :filter-min-score="form.filters.minScore"
         @close="modalValidationOpen = false"
         @add="handleSubmitAddValidation"

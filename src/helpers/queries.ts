@@ -9,11 +9,18 @@ export const VOTES_QUERY = gql`
     $orderDirection: OrderDirection
     $voter: String
     $space: String
+    $created_gte: Int
   ) {
     votes(
       first: $first
       skip: $skip
-      where: { proposal: $id, vp_gt: 0, voter: $voter, space: $space }
+      where: {
+        proposal: $id
+        vp_gt: 0
+        voter: $voter
+        space: $space
+        created_gte: $created_gte
+      }
       orderBy: $orderBy
       orderDirection: $orderDirection
     ) {
@@ -67,7 +74,7 @@ export const PROPOSAL_QUERY = gql`
       scores_by_strategy
       scores_total
       votes
-      # delegation
+      flagged
     }
   }
 `;
@@ -80,6 +87,8 @@ export const PROPOSALS_QUERY = gql`
     $space: String
     $space_in: [String]
     $author_in: [String]
+    $title_contains: String
+    $space_verified: Boolean
   ) {
     proposals(
       first: $first
@@ -89,6 +98,8 @@ export const PROPOSALS_QUERY = gql`
         state: $state
         space_in: $space_in
         author_in: $author_in
+        title_contains: $title_contains
+        space_verified: $space_verified
       }
     ) {
       id
@@ -107,6 +118,8 @@ export const PROPOSALS_QUERY = gql`
         members
         avatar
         symbol
+        verified
+        plugins
       }
       scores_state
       scores_total
@@ -114,6 +127,7 @@ export const PROPOSALS_QUERY = gql`
       votes
       quorum
       symbol
+      flagged
     }
   }
 `;
@@ -179,88 +193,13 @@ export const ALIASES_QUERY = gql`
   }
 `;
 
-export const SPACES_QUERY = gql`
-  query Spaces($id_in: [String]) {
-    spaces(where: { id_in: $id_in }, first: 200) {
-      id
-      name
-      about
-      network
-      symbol
-      network
-      terms
-      skin
-      avatar
-      twitter
-      website
-      github
-      coingecko
-      private
-      domain
-      admins
-      moderators
-      members
-      categories
-      plugins
-      followersCount
-      template
-      guidelines
-      parent {
-        id
-        name
-        avatar
-        followersCount
-        children {
-          id
-        }
-      }
-      children {
-        id
-        name
-        avatar
-        followersCount
-        parent {
-          id
-        }
-      }
-      voting {
-        delay
-        period
-        type
-        quorum
-        privacy
-        hideAbstain
-      }
-      strategies {
-        name
-        network
-        params
-      }
-      validation {
-        name
-        params
-      }
-      voteValidation {
-        name
-        params
-      }
-      filters {
-        minScore
-        onlyMembers
-      }
-      treasuries {
-        name
-        address
-        network
-      }
-    }
-  }
-`;
-
 export const ENS_DOMAINS_BY_ACCOUNT_QUERY = gql`
   query Domain($id: String!) {
     account(id: $id) {
       domains {
+        name
+      }
+      wrappedDomains {
         name
       }
     }
@@ -411,6 +350,138 @@ export const USER_VOTED_PROPOSAL_IDS_QUERY = gql`
     votes(where: { voter: $voter, proposal_in: $proposals }) {
       proposal {
         id
+      }
+    }
+  }
+`;
+
+export const SPACES_RANKING_QUERY = gql`
+  query Ranking(
+    $first: Int
+    $skip: Int
+    $search: String
+    $network: String
+    $category: String
+  ) {
+    ranking(
+      first: $first
+      skip: $skip
+      where: { search: $search, network: $network, category: $category }
+    ) {
+      metrics {
+        total
+        categories
+      }
+      items {
+        id
+        name
+        private
+        verified
+        categories
+        rank
+        activeProposals
+        proposalsCount
+        proposalsCount7d
+        followersCount
+        followersCount7d
+        votesCount
+        votesCount7d
+        terms
+      }
+    }
+  }
+`;
+
+export const SPACES_QUERY = gql`
+  query Spaces($id_in: [String], $first: Int, $skip: Int) {
+    spaces(first: $first, skip: $skip, where: { id_in: $id_in }) {
+      id
+      name
+      avatar
+      verified
+      activeProposals
+      followersCount
+      terms
+      flagged
+    }
+  }
+`;
+
+export const SPACE_QUERY = gql`
+  query Space($id: String!) {
+    space(id: $id) {
+      id
+      name
+      about
+      network
+      symbol
+      network
+      terms
+      skin
+      avatar
+      twitter
+      website
+      github
+      coingecko
+      private
+      domain
+      admins
+      moderators
+      members
+      categories
+      plugins
+      followersCount
+      template
+      guidelines
+      verified
+      flagged
+      parent {
+        id
+        name
+        avatar
+        followersCount
+        children {
+          id
+        }
+      }
+      children {
+        id
+        name
+        avatar
+        followersCount
+        parent {
+          id
+        }
+      }
+      voting {
+        delay
+        period
+        type
+        quorum
+        privacy
+        hideAbstain
+      }
+      strategies {
+        name
+        network
+        params
+      }
+      validation {
+        name
+        params
+      }
+      voteValidation {
+        name
+        params
+      }
+      filters {
+        minScore
+        onlyMembers
+      }
+      treasuries {
+        name
+        address
+        network
       }
     }
   }

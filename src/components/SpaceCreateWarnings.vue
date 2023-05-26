@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { ExtendedSpace } from '@/helpers/interfaces';
-
-import { useWeb3, useGnosis, useSnapshot } from '@/composables';
 
 const props = defineProps<{
   space: ExtendedSpace;
   validationFailed: boolean;
   isValidAuthor: boolean;
   validationName: string;
+  containsShortUrl: boolean;
 }>();
 
 const { web3, web3Account } = useWeb3();
@@ -107,5 +105,9 @@ const strategySymbolsString = computed(() => {
       :min-score="minScore"
       :symbol="strategySymbolsString || space.symbol"
     />
+
+    <BaseMessageBlock v-else-if="containsShortUrl" level="warning">
+      {{ $t('warningShortUrl') }}
+    </BaseMessageBlock>
   </div>
 </template>

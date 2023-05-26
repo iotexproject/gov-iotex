@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import schemas from '@snapshot-labs/snapshot.js/src/schemas';
-import { useFormSpaceSettings } from '@/composables';
+import categories from '@/helpers/categories.json';
 
 const props = defineProps<{
   context: 'setup' | 'settings';
+  isViewOnly?: boolean;
 }>();
 
-const { form, getValidation } = useFormSpaceSettings(props.context);
+const { form, validationErrors, addRef } = useFormSpaceSettings(props.context);
+const { env } = useApp();
 
 const avatarNotReactive = ref(form.value.avatar);
 </script>
@@ -23,6 +24,7 @@ const avatarNotReactive = ref(form.value.avatar);
                 {{ $t('settings.avatar') }}
               </LabelInput>
               <InputUploadAvatar
+                :is-view-only="isViewOnly || env === 'demo'"
                 class="h-[80px]"
                 @image-uploaded="url => (form.avatar = url)"
                 @image-remove="() => (form.avatar = '')"
@@ -37,9 +39,13 @@ const avatarNotReactive = ref(form.value.avatar);
                     <AvatarOverlayEdit
                       :loading="uploading"
                       :avatar="form?.avatar"
+                      :is-view-only="isViewOnly || env === 'demo'"
                     />
                     <div
-                      class="absolute right-0 bottom-[2px] rounded-full bg-skin-heading p-1"
+                      :class="{
+                        'cursor-not-allowed': isViewOnly || env === 'demo'
+                      }"
+                      class="absolute bottom-[2px] right-0 rounded-full bg-skin-heading p-1"
                     >
                       <i-ho-pencil class="text-[12px] text-skin-bg" />
                     </div>
@@ -49,48 +55,65 @@ const avatarNotReactive = ref(form.value.avatar);
             </div>
           </div>
 
-          <BaseInput
+          <TuneInput
+            :ref="addRef"
             v-model="form.name"
-            :title="$t(`settings.name.label`)"
-            :error="getValidation('name')"
+            :label="$t(`settings.name.label`)"
+            :error="validationErrors?.name"
             :max-length="schemas.space.properties.name.maxLength"
             :placeholder="$t('settings.name.placeholder')"
-            focus-on-mount
+            :disabled="isViewOnly"
+            autofocus
           />
 
-          <LabelInput> {{ $t(`settings.about.label`) }} </LabelInput>
-          <TextareaAutosize
+          <TuneTextarea
+            :ref="addRef"
             v-model="form.about"
-            class="s-input !rounded-3xl"
+            :label="$t(`settings.about.label`)"
             :max-length="schemas.space.properties.about.maxLength"
             :placeholder="$t('settings.about.placeholder')"
+            :disabled="isViewOnly"
           />
 
-          <ListboxMultipleCategories
-            :categories="form.categories"
-            @update-categories="value => (form.categories = value)"
+          <TuneListboxMultiple
+            :ref="addRef"
+            v-model="form.categories"
+            :placeholder="$t('settings.categories.select')"
+            :label="$t(`settings.categories.label`)"
+            :items="
+              categories.map(category => ({
+                value: category,
+                name: $t(`explore.categories.${category}`)
+              }))
+            "
+            :limit="2"
+            :disabled="isViewOnly"
           />
 
-          <InputUrl
+          <TuneInputUrl
+            :ref="addRef"
             v-model="form.website"
-            :title="$t('settings.website')"
-            :error="getValidation('website')"
+            :label="$t('settings.website')"
+            :error="validationErrors?.website"
             :max-length="schemas.space.properties.website.maxLength"
+            :disabled="isViewOnly"
             placeholder="e.g. https://www.example.com"
           />
 
-          <InputUrl
+          <TuneInputUrl
+            :ref="addRef"
             v-model="form.terms"
-            :title="$t(`settings.terms.label`)"
-            :information="$t('settings.terms.information')"
-            :error="getValidation('terms')"
+            :label="$t(`settings.terms.label`)"
+            :hint="$t('settings.terms.information')"
+            :error="validationErrors?.terms"
+            :disabled="isViewOnly"
             placeholder="e.g. https://example.com/terms"
           />
 
-          <InputSwitch
+          <TuneSwitch
             v-model="form.private"
-            class="!mt-3"
-            :text-right="$t('settings.hideSpace')"
+            :disabled="isViewOnly"
+            :label="$t('settings.hideSpace')"
           />
         </div>
       </div>

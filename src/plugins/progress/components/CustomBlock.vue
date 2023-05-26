@@ -1,11 +1,7 @@
 <script setup>
 import Plugin from '../index';
-import { useWeb3 } from '@/composables/useWeb3';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { signMessage } from '@snapshot-labs/snapshot.js/src/utils/web3';
-import { ref, onMounted } from 'vue';
-import { useFlashNotification } from '@/composables/useFlashNotification';
-import { useI18n } from '@/composables/useI18n';
 
 const { notify } = useFlashNotification();
 const { web3Account } = useWeb3();
@@ -328,7 +324,7 @@ onMounted(async () => {
           <textarea
             v-model="newStepDescription"
             :placeholder="[$t('progress.description')]"
-            class="input h-full w-full rounded-3xl border border-skin-border py-3 px-4 text-left focus-within:!border-skin-link hover:border-skin-text"
+            class="input h-full w-full rounded-3xl border border-skin-border px-4 py-3 text-left focus-within:!border-skin-link hover:border-skin-text"
           />
           <BaseButton
             v-if="isAdmin || isOwner"

@@ -1,35 +1,33 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
 import Plugin from '../index';
 import networks from '@snapshot-labs/snapshot.js/src/networks.json';
 import { getInstance } from '@snapshot-labs/lock/plugins/vue3';
 import { sleep } from '@snapshot-labs/snapshot.js/src/utils';
 import { ensureRightNetwork } from './SafeTransactions.vue';
-import { useIntl } from '@/composables/useIntl';
+import { formatUnits } from '@ethersproject/units';
 
-import {
-  useWeb3,
-  useI18n,
-  useFlashNotification,
-  useTxStatus,
-  useSafe
-} from '@/composables';
+const props = defineProps([
+  'batches',
+  'proposal',
+  'space',
+  'results',
+  'network',
+  'umaAddress',
+  'multiSendAddress'
+]);
 
 const { formatDuration } = useIntl();
 const { t } = useI18n();
 
 const { clearBatchError } = useSafe();
 const { web3 } = useWeb3();
-const { pendingCount } = useTxStatus();
+const {
+  createPendingTransaction,
+  updatePendingTransaction,
+  removePendingTransaction
+} = useTxStatus();
 const { notify } = useFlashNotification();
-
-const props = defineProps([
-  'batches',
-  'proposal',
-  'network',
-  'umaAddress',
-  'multiSendAddress'
-]);
+const { quorum } = useQuorum(props);
 
 const plugin = new Plugin();
 
@@ -40,10 +38,9 @@ const QuestionStates = {
   waitingForVoteConfirmation: 2,
   noTransactions: 3,
   completelyExecuted: 4,
-  disputedButNotResolved: 5,
-  waitingForProposal: 6,
-  waitingForLiveness: 7,
-  proposalApproved: 8
+  waitingForProposal: 5,
+  waitingForLiveness: 6,
+  proposalApproved: 7
 };
 Object.freeze(QuestionStates);
 
@@ -65,14 +62,11 @@ function showProposeModal() {
   voteResultsConfirmed.value = true;
 }
 
-const getTransactionsUma = () => {
-  return props.batches.map(batch => [
-    batch.transactions[0].to,
-    Number(batch.transactions[0].operation),
-    batch.transactions[0].value,
-    batch.transactions[0].data
-  ]);
-};
+const getTransactionsUma = () =>
+  props.batches.map(batch => {
+    const mainTx = batch.mainTransaction;
+    return [mainTx.to, Number(mainTx.operation), mainTx.value, mainTx.data];
+  });
 
 const updateDetails = async () => {
   loading.value = true;
@@ -93,40 +87,44 @@ const updateDetails = async () => {
 
 const approveBondUma = async () => {
   if (!questionDetails.value.oracle) return;
+  const txPendingId = createPendingTransaction();
   try {
     actionInProgress.value = 'approve-bond';
 
     await ensureRightNetwork(props.network);
 
-    const approveBond = await plugin.approveBondUma(
+    const approveBond = plugin.approveBondUma(
       props.network,
       getInstance().web3,
       props.umaAddress
     );
-    await approveBond.next();
+    const step = await approveBond.next();
+    if (step.value)
+      updatePendingTransaction(txPendingId, { hash: step.value.hash });
     actionInProgress.value = null;
-    pendingCount.value++;
     await approveBond.next();
     notify(t('notify.youDidIt'));
-    pendingCount.value--;
     await sleep(3e3);
     await updateDetails();
   } catch (e) {
     console.error(e);
     actionInProgress.value = null;
+  } finally {
+    removePendingTransaction(txPendingId);
   }
 };
 
-const getProposalUrl = (chain, txHash) => {
+const getProposalUrl = (chain, txHash, logIndex) => {
   if (Number(chain) !== 5 && Number(chain) !== 80001) {
-    return `https://oracle.umaproject.org/request?transactionHash=${txHash}&chainId=${chain}&oracleType=OptimisticV2&eventIndex=0`;
+    return `https://oracle.uma.xyz?transactionHash=${txHash}&logIndex=${logIndex}`;
   }
-  return `https://testnet.oracle.umaproject.org/request?transactionHash=${txHash}&chainId=${chain}&oracleType=OptimisticV2&eventIndex=0`;
+  return `https://testnet.oracle.uma.xyz?transactionHash=${txHash}&logIndex=${logIndex}`;
 };
 
 const submitProposalUma = async () => {
   if (!getInstance().isAuthenticated.value) return;
   actionInProgress.value = 'submit-proposal';
+  const txPendingId = createPendingTransaction();
   try {
     await ensureRightNetwork(props.network);
     const proposalSubmission = plugin.submitProposalUma(
@@ -135,24 +133,26 @@ const submitProposalUma = async () => {
       props.proposal.ipfs,
       getTransactionsUma()
     );
-    await proposalSubmission.next();
+    const step = await proposalSubmission.next();
+    if (step.value)
+      updatePendingTransaction(txPendingId, { hash: step.value.hash });
     actionInProgress.value = null;
-    pendingCount.value++;
     await proposalSubmission.next();
     notify(t('notify.youDidIt'));
-    pendingCount.value--;
     await sleep(3e3);
     await updateDetails();
   } catch (e) {
     console.error(e);
   } finally {
     actionInProgress.value = null;
+    removePendingTransaction(txPendingId);
   }
 };
 
 const executeProposalUma = async () => {
   if (!getInstance().isAuthenticated.value) return;
   action2InProgress.value = 'execute-proposal';
+  const txPendingId = createPendingTransaction();
   try {
     await ensureRightNetwork(props.network);
   } catch (e) {
@@ -168,49 +168,18 @@ const executeProposalUma = async () => {
       props.umaAddress,
       getTransactionsUma()
     );
-    await executingProposal.next();
+    const step = await executingProposal.next();
+    if (step.value)
+      updatePendingTransaction(txPendingId, { hash: step.value.hash });
     action2InProgress.value = null;
-    pendingCount.value++;
     await executingProposal.next();
     notify(t('notify.youDidIt'));
-    pendingCount.value--;
     await sleep(3e3);
     await updateDetails();
   } catch (err) {
-    pendingCount.value--;
     action2InProgress.value = null;
-  }
-};
-
-const deleteDisputedProposalUma = async () => {
-  if (!getInstance().isAuthenticated.value) return;
-  action2InProgress.value = 'delete-disputed-proposal';
-  try {
-    await ensureRightNetwork(props.network);
-  } catch (e) {
-    console.error(e);
-    action2InProgress.value = null;
-    return;
-  }
-
-  try {
-    clearBatchError();
-    const deletingDisputedProposal = plugin.deleteDisputedProposalUma(
-      getInstance().web3,
-      props.umaAddress,
-      questionDetails.value.proposalEvent.proposalHash
-    );
-    await deletingDisputedProposal.next();
-    action2InProgress.value = null;
-    pendingCount.value++;
-    await deletingDisputedProposal.next();
-    notify(t('notify.youDidIt'));
-    pendingCount.value--;
-    await sleep(3e3);
-    await updateDetails();
-  } catch (err) {
-    pendingCount.value--;
-    action2InProgress.value = null;
+  } finally {
+    removePendingTransaction(txPendingId);
   }
 };
 
@@ -237,7 +206,7 @@ const questionState = computed(() => {
     return QuestionStates.noTransactions;
 
   const ts = (Date.now() / 1e3).toFixed();
-  const { proposalEvent, proposalExecuted, activeProposal } =
+  const { assertionEvent, proposalExecuted, activeProposal } =
     questionDetails.value;
 
   // If proposal has already been executed, prevents user from proposing again.
@@ -251,18 +220,19 @@ const questionState = computed(() => {
   if (!activeProposal && voteResultsConfirmed)
     return QuestionStates.waitingForProposal;
 
-  // If disputed, a proposal can be deleted to enable a proposal to be proposed again.
-  if (proposalEvent.isDisputed) return QuestionStates.disputedButNotResolved;
-
   // Proposal has been made and is waiting for liveness period to complete.
-  if (!proposalEvent.isExpired) return QuestionStates.waitingForLiveness;
+  if (!assertionEvent.isExpired) return QuestionStates.waitingForLiveness;
 
   // Proposal is approved if it expires without a dispute and hasn't been settled.
-  if (proposalEvent.isExpired && !proposalEvent.isSettled)
+  if (assertionEvent.isExpired && !assertionEvent.isSettled)
     return QuestionStates.proposalApproved;
 
   // Proposal is approved if it has been settled without a disputer and hasn't been executed.
-  if (proposalEvent.isSettled && !proposalEvent.isDisputed && !proposalExecuted)
+  if (
+    assertionEvent.isSettled &&
+    !assertionEvent.isDisputed &&
+    !proposalExecuted
+  )
     return QuestionStates.proposalApproved;
 
   return QuestionStates.error;
@@ -346,7 +316,7 @@ onMounted(async () => {
             <h3 class="title">{{ $t('safeSnap.labels.request') }}</h3>
           </template>
           <div class="my-3 p-3">
-            <div class="pr-3 pl-3">
+            <div class="pl-3 pr-3">
               <p>{{ $t('safeSnap.labels.confirmVoteResultsToolTip') }}</p>
             </div>
             <div class="my-3 rounded-lg border p-3">
@@ -356,7 +326,10 @@ onMounted(async () => {
                 }}</strong>
                 <span class="float-right text-skin-link">
                   {{
-                    questionDetails.minimumBond.toString() +
+                    formatUnits(
+                      questionDetails.minimumBond,
+                      questionDetails.decimals
+                    ) +
                     ' ' +
                     questionDetails.symbol
                   }}
@@ -372,6 +345,12 @@ onMounted(async () => {
               </div>
             </div>
             <div>
+              <BaseMessage
+                v-if="Number(props.proposal.scores_total) < Number(quorum)"
+                level="warning-red"
+              >
+                {{ $t('safeSnap.labels.quorumWarning') }}
+              </BaseMessage>
               <BaseMessage
                 v-if="
                   Number(questionDetails.minimumBond.toString()) >
@@ -389,7 +368,8 @@ onMounted(async () => {
               class="my-1 w-full"
               :disabled="
                 Number(questionDetails.minimumBond.toString()) >
-                Number(questionDetails.userBalance.toString())
+                  Number(questionDetails.userBalance.toString()) ||
+                Number(props.proposal.scores_total) < Number(quorum)
               "
             >
               {{ $t('safeSnap.labels.request') }}
@@ -408,7 +388,7 @@ onMounted(async () => {
           <strong>{{
             'Proposal can be executed at ' +
             new Date(
-              questionDetails.proposalEvent.expirationTimestamp * 1000
+              questionDetails.assertionEvent.expirationTimestamp * 1000
             ).toLocaleString()
           }}</strong>
         </div>
@@ -418,7 +398,8 @@ onMounted(async () => {
             :href="
               getProposalUrl(
                 props.network,
-                questionDetails.proposalEvent.proposalTxHash
+                questionDetails.assertionEvent.proposalTxHash,
+                questionDetails.assertionEvent.logIndex
               )
             "
             class="rounded-lg border p-2 text-skin-text"
@@ -431,18 +412,6 @@ onMounted(async () => {
           </a>
         </div>
       </BaseContainer>
-    </div>
-
-    <div
-      v-if="questionState === questionStates.disputedButNotResolved"
-      class="my-4"
-    >
-      <BaseButton
-        :loading="action2InProgress === 'delete-disputed-proposal'"
-        @click="deleteDisputedProposalUma"
-      >
-        {{ $t('safeSnap.labels.deleteDisputedProposal') }}
-      </BaseButton>
     </div>
 
     <div

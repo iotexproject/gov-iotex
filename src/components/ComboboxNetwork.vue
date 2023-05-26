@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useNetworksFilter } from '@/composables/useNetworksFilter';
-
 defineProps<{
   network: string;
-  information?: string;
+  hint?: string;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits(['select']);
 
-const query = ref('');
-
 const { filterNetworks } = useNetworksFilter();
 
 const networks = computed((): { id: string; name: string }[] => {
-  const filteredNetworks = filterNetworks(query.value).map(_n => ({
+  const filteredNetworks = filterNetworks().map(_n => ({
     id: _n.key,
     name: _n.name
   }));
@@ -24,20 +20,22 @@ const networks = computed((): { id: string; name: string }[] => {
 </script>
 
 <template>
-  <BaseCombobox
+  <TuneCombobox
     :label="$t('settings.network.label')"
     :items="networks"
-    :selected-id="network"
-    :information="information"
-    @select="value => emit('select', value.id)"
-    @search="value => (query = value)"
+    :model-value="network"
+    :hint="hint"
+    :disabled="disabled"
+    @update:model-value="value => emit('select', value)"
   >
     <template #item="{ item }">
-      <div class="truncate pr-2">
-        {{ item.name }}
-      </div>
+      <div class="flex items-center">
+        <div class="truncate pr-2">
+          {{ item.name }}
+        </div>
 
-      <BasePill class="leading-4"> #{{ item.id }} </BasePill>
+        <BasePill class="leading-4"> #{{ item.id }} </BasePill>
+      </div>
     </template>
-  </BaseCombobox>
+  </TuneCombobox>
 </template>

@@ -121,6 +121,8 @@ export default {
   props: [
     'modelValue',
     'proposal',
+    'space',
+    'results',
     'network',
     'realityAddress',
     'umaAddress',
@@ -251,7 +253,7 @@ export default {
 <template>
   <div>
     <h4
-      class="flex rounded-t-none border-b px-4 pt-3 pb-[12px] md:rounded-t-md"
+      class="flex rounded-t-none border-b px-4 pb-[12px] pt-3 md:rounded-t-md"
     >
       <BaseAvatar class="float-left mr-2" :src="networkIcon" size="28" />
       {{ networkName }} Safe
@@ -331,6 +333,8 @@ export default {
           "
           :batches="input"
           :proposal="proposal"
+          :space="space"
+          :results="results"
           :uma-address="transactionConfig.umaAddress"
           :multi-send-address="transactionConfig.multiSendAddress"
           :network="transactionConfig.network"
