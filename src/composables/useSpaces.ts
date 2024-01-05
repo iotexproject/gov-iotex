@@ -32,7 +32,7 @@ export function useSpaces() {
           first: 12,
           private: false,
           search: variables.search || undefined,
-          network: 4689,
+          network: '4689',
           category: variables.category || undefined
         }
       },
