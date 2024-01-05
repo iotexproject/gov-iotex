@@ -1,0 +1,12 @@
+{
+  "name": "oSnap by UMA",
+  "version": "1.0.0",
+  "author": "UMA",
+  "website": "https://uma.xyz/osnap",
+  "icon": "https://osnap.uma.xyz/osnap-icon.svg",
+  "defaults": {
+    "proposal": {
+      "safe": null
+    }
+  }
+}

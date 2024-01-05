@@ -1,38 +1,56 @@
-import Vue from 'vue';
-import autofocus from 'vue-autofocus-directive';
-import infiniteScroll from 'vue-infinite-scroll';
-import TextareaAutosize from 'vue-textarea-autosize';
-import Jazzicon from 'vue-jazzicon';
-import upperFirst from 'lodash/upperFirst';
-import camelCase from 'lodash/camelCase';
-import App from '@/App.vue';
+import { Buffer } from 'buffer';
+(window as any).global = window;
+(window as any).Buffer = Buffer;
+
+import { LockPlugin } from '@snapshot-labs/lock/plugins/vue3';
+import { DefaultApolloClient } from '@vue/apollo-composable';
+import { createHead } from '@vueuse/head';
+import options from '@/helpers/auth';
+import VueTippy from 'vue-tippy';
+import VueViewer from 'v-viewer';
+import { apolloClient } from '@/helpers/apollo';
+import { initSentry } from '@/sentry';
+import { KNOWN_HOSTS } from '@/helpers/constants';
+import i18n from '@/helpers/i18n';
 import router from '@/router';
-import store from '@/store';
-import mixins from '@/mixins';
-import i18n from '@/i18n';
-import '@/style.scss';
+import '@/assets/css/main.scss';
+import App from '@/App.vue';
 
-Vue.use(infiniteScroll);
-Vue.use(TextareaAutosize);
+const parentUrl =
+  window.location != window.parent.location
+    ? document.referrer ||
+      document.location.ancestorOrigins[
+        document.location.ancestorOrigins.length - 1
+      ]
+    : document.location.href;
+const parentHost = new URL(parentUrl).host;
+if (window !== window.parent && !KNOWN_HOSTS.includes(parentHost)) {
+  document.documentElement.style.display = 'none';
+  throw new Error(`Unknown host: ${parentHost}`);
+}
 
-const requireComponent = require.context('@/components', true, /[\w-]+\.vue$/);
-requireComponent.keys().forEach(fileName => {
-  const componentConfig = requireComponent(fileName);
-  const componentName = upperFirst(
-    camelCase(fileName.replace(/^\.\//, '').replace(/\.\w+$/, ''))
-  );
-  Vue.component(componentName, componentConfig.default || componentConfig);
+const head = createHead();
+
+const app = createApp({
+  setup() {
+    provide(DefaultApolloClient, apolloClient);
+  },
+  render: () => h(App)
 });
 
-Vue.component('jazzicon', Jazzicon);
-Vue.mixin(mixins);
-Vue.directive('autofocus', autofocus);
+initSentry(app, router);
 
-Vue.config.productionTip = false;
+app
+  .use(head)
+  .use(i18n)
+  .use(router)
+  .use(LockPlugin, options)
+  .use(VueTippy, {
+    defaultProps: { delay: [400, null] },
+    directive: 'tippy' // => v-tippy
+  })
+  .use(VueViewer, { defaultOptions: { navbar: true, toolbar: false } });
 
-new Vue({
-  i18n,
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app');
+app.mount('#app');
+
+export default app;
