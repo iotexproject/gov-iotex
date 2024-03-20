@@ -1,6 +1,6 @@
 <div align="center">
     <img src="public/icon.svg" height="70" alt="Snapshot Logo">
-    <h1>Snapshot</h1>
+    <h1>loTeX Governance Portal</h1>
     <strong>Snapshot is an off-chain gasless multi-governance client with easy to verify and hard to contest results.</strong>
 </div>
 <br>

@@ -119,7 +119,10 @@ export function calcToSeconds(value, unit) {
 export function getIpfsUrl(url: string) {
   const gateway: any =
     import.meta.env.VITE_IPFS_GATEWAY || 'cloudflare-ipfs.com';
-  return getUrl(url, gateway);
+  return getUrl(url, gateway).replace(
+    'https://snapshot.mypinata.cloud/ipfs',
+    'https://gov.iotex.io/images'
+  );
 }
 
 export async function clearStampCache(id: string, type = 'space') {
