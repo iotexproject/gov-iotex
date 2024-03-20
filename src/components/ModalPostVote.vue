@@ -2,9 +2,10 @@
 import { getChoiceString } from '@/helpers/utils';
 import { ExtendedSpace, Proposal } from '@/helpers/interfaces';
 
-const { shareVote, shareProposalTwitter, shareProposalHey } = useSharing();
+const { shareVote, shareProposalX, shareProposalHey } = useSharing();
 const { web3Account } = useWeb3();
-const { userState } = useEmailSubscription();
+const { userState, loadEmailSubscriptions, initialized } =
+  useEmailSubscription();
 
 const props = defineProps<{
   open: boolean;
@@ -27,16 +28,23 @@ const imgPath = computed(() => {
     : '/stickers/hooray.png';
 });
 
-function share(shareTo: 'twitter' | 'hey') {
+function share(shareTo: 'x' | 'hey') {
   shareVote(shareTo, {
     space: props.space,
     proposal: props.proposal,
     choices: getChoiceString(props.proposal, props.selectedChoices)
   });
 }
+
+onMounted(() => {
+  if (!initialized.value) {
+    loadEmailSubscriptions();
+  }
+});
 </script>
 
 <template>
+  <!-- TODO: Add gratitude message -->
   <BaseModal :open="open" max-height="550px" @close="emit('close')">
     <div class="flex flex-col justify-between p-4 md:h-auto">
       <div>
@@ -67,12 +75,12 @@ function share(shareTo: 'twitter' | 'hey') {
           class="flex !h-[42px] w-full items-center justify-center gap-2"
           @click="
             props.waitingForSigners
-              ? shareProposalTwitter(space, proposal)
-              : share('twitter')
+              ? shareProposalX(space, proposal)
+              : share('x')
           "
         >
-          <i-s-twitter class="text-md text-[#1DA1F2]" />
-          {{ $t('shareOnTwitter') }}
+          <i-s-x class="text-md" />
+          Share on X
         </TuneButton>
         <TuneButton
           class="flex !h-[42px] w-full items-center justify-center gap-2"
@@ -87,7 +95,7 @@ function share(shareTo: 'twitter' | 'hey') {
         </TuneButton>
 
         <TuneButton
-          v-if="userState !== 'VERIFIED'"
+          v-if="userState !== 'VERIFIED' && initialized"
           class="flex !h-[42px] w-full items-center justify-center gap-2"
           @click="subscribeEmail"
         >

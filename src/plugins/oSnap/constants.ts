@@ -1105,7 +1105,9 @@ export const EXPLORER_API_URLS = {
   '246': 'https://explorer.energyweb.org/api',
   '137': 'https://api.polygonscan.com/api',
   '56': 'https://api.bscscan.com/api',
-  '42161': 'https://api.arbiscan.io/api'
+  '42161': 'https://api.arbiscan.io/api',
+  // '1116': Add 'https://openapi.coredao.org/api' if API key requirement is removed
+  '11155111': 'https://api-sepolia.etherscan.io/api',
 } as const;
 
 export const GNOSIS_SAFE_TRANSACTION_API_URLS = {
@@ -1116,7 +1118,22 @@ export const GNOSIS_SAFE_TRANSACTION_API_URLS = {
   '246': 'https://safe-transaction-ewc.safe.global/api',
   '137': 'https://safe-transaction-polygon.safe.global/api',
   '56': 'https://safe-transaction-bsc.safe.global/api',
-  '42161': 'https://safe-transaction-arbitrum.safe.global/api'
+  '42161': 'https://safe-transaction-arbitrum.safe.global/api',
+  '1116': 'https://safetx.coredao.org/api',
+  '11155111': 'https://safe-transaction-sepolia.safe.global/api',
+} as const;
+
+export const SAFE_APP_URLS = {
+  '1': 'https://app.safe.global/apps/open',
+  '5': 'https://app.safe.global/apps/open',
+  '100': 'https://app.safe.global/apps/open',
+  '73799': 'https://app.safe.global/apps/open',
+  '246': 'https://app.safe.global/apps/open',
+  '137': 'https://app.safe.global/apps/open',
+  '56': 'https://app.safe.global/apps/open',
+  '42161': 'https://app.safe.global/apps/open',
+  '1116': 'https://safe.coredao.org/apps/open',
+  '11155111': 'https://app.safe.global/apps/open',
 } as const;
 
 // ABIs
@@ -1418,6 +1435,24 @@ export const contractData = [
     deployBlock: 27816737
   },
   {
+    // core
+    network: '1116',
+    name: 'OptimisticOracleV3',
+    address: '0xD84ACa67d683aF7702705141b3C7E57e4e5e7726',
+    subgraph:
+      'https://thegraph.coredao.org/subgraphs/name/umaprotocol/core-optimistic-oracle-v3',
+    deployBlock: 11341063
+  },
+  {
+    // sepolia
+    network: '11155111',
+    name: 'OptimisticOracleV3',
+    address: '0xFd9e2642a170aDD10F53Ee14a93FcF2F31924944',
+    subgraph:
+      'https://api.thegraph.com/subgraphs/name/reinis-frp/sepolia-optimistic-oracle-v3',
+    deployBlock: 5421195
+  },
+  {
     // mainnet
     network: '1',
     name: 'OptimisticGovernor',
@@ -1480,7 +1515,25 @@ export const contractData = [
     deployBlock: 28050250,
     subgraph:
       'https://api.thegraph.com/subgraphs/name/umaprotocol/avalanche-optimistic-governor'
-  }
+  },
+  {
+    // core
+    network: '1116',
+    name: 'OptimisticGovernor',
+    address: '0x596Fd6A5A185c67aBD1c845b39f593fBA9C233aa',
+    deployBlock: 11341122,
+    subgraph:
+    'https://thegraph.coredao.org/subgraphs/name/umaprotocol/core-optimistic-governor'
+  },
+  {
+    // sepolia
+    network: '11155111',
+    name: 'OptimisticGovernor',
+    address: '0x40153DdFAd90C49dbE3F5c9F96f2a5B25ec67461',
+    deployBlock: 5421242,
+    subgraph:
+      'https://api.thegraph.com/subgraphs/name/reinis-frp/sepolia-optimistic-governor'
+  },
 ] as const;
 
 export const transactionTypes = [

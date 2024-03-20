@@ -6,6 +6,7 @@ import { useConfirmDialog, useStorage } from '@vueuse/core';
 const props = defineProps<{
   space: ExtendedSpace;
 }>();
+const spaceType = computed(() => (props.space.turbo ? 'turbo' : 'default'));
 
 useMeta({
   title: {
@@ -26,6 +27,7 @@ const { web3Account } = useWeb3();
 const { send, isSending } = useClient();
 const { reloadSpace, deleteSpace } = useExtendedSpaces();
 const { loadFollows } = useFollowSpace();
+const { isWhitelisted } = useBoost();
 const {
   validationErrors,
   isValid,
@@ -35,13 +37,15 @@ const {
   populateForm,
   resetForm,
   forceShowError
-} = useFormSpaceSettings('settings');
+} = useFormSpaceSettings('settings', {
+  spaceType: spaceType.value
+});
 const { resetTreasuryAssets } = useTreasury();
 const { notify } = useFlashNotification();
 const { isGnosisAndNotDefaultNetwork } = useGnosis();
 const {
   settingENSRecord,
-  modalUnsupportedNetworkOpen,
+  modalWrongNetworkOpen,
   modalConfirmSetTextRecordOpen,
   spaceControllerInput,
   setRecord,
@@ -66,6 +70,7 @@ const loaded = ref(false);
 const modalControllerEditOpen = ref(false);
 const currentPage = ref(Page.GENERAL);
 const modalDeleteSpaceConfirmation = ref('');
+const modalDeleteSpaceAcknowledge = ref(false);
 const modalSettingsSavedOpen = ref(false);
 const modalSettingsSavedIgnore = useStorage(
   'snapshot.settings.saved.ignore',
@@ -112,11 +117,12 @@ const settingsPages = computed(() => [
 
 async function handleDelete() {
   modalDeleteSpaceConfirmation.value = '';
+  modalDeleteSpaceAcknowledge.value = false;
 
   const result = await send(props.space, 'delete-space', {});
   console.log(':handleDelete result', result);
 
-  if (result && result.id) {
+  if (result?.id) {
     if (domain) {
       return window.open(`https://snapshot.org/#/`, '_self');
     } else {
@@ -242,6 +248,7 @@ onBeforeRouteLeave(async () => {
               context="settings"
               :is-view-only="isViewOnly"
               :show-errors="showFormErrors"
+              :space-type="spaceType"
             />
           </template>
 
@@ -258,6 +265,12 @@ onBeforeRouteLeave(async () => {
           </template>
 
           <template v-if="currentPage === Page.VOTING">
+            <SettingsBoostBlock
+              v-if="isWhitelisted(space.id)"
+              context="settings"
+              :is-view-only="isViewOnly"
+            />
+
             <SettingsVotingBlock
               context="settings"
               :is-view-only="isViewOnly"
@@ -359,17 +372,20 @@ onBeforeRouteLeave(async () => {
     </template>
   </TheLayout>
 
+  <ModalWrongNetwork
+    :open="modalWrongNetworkOpen"
+    show-demo-button
+    @close="modalWrongNetworkOpen = false"
+    @network-changed="modalConfirmSetTextRecordOpen = true"
+  />
+
   <teleport to="#modal">
     <ModalControllerEdit
       :open="modalControllerEditOpen"
       :ens-address="space.id"
       @close="modalControllerEditOpen = false"
     />
-    <ModalUnsupportedNetwork
-      :open="modalUnsupportedNetworkOpen"
-      @close="modalUnsupportedNetworkOpen = false"
-      @network-changed="modalConfirmSetTextRecordOpen = true"
-    />
+
     <ModalConfirmAction
       :open="modalConfirmSetTextRecordOpen"
       @close="modalConfirmSetTextRecordOpen = false"
@@ -395,13 +411,16 @@ onBeforeRouteLeave(async () => {
     />
     <ModalConfirmAction
       :open="isConfirmDeleteOpen"
-      :disabled="modalDeleteSpaceConfirmation !== space.id"
+      :disabled="
+        modalDeleteSpaceConfirmation !== space.id ||
+        !modalDeleteSpaceAcknowledge
+      "
       show-cancel
       @close="cancelDelete"
       @confirm="handleDelete"
     >
-      <BaseMessageBlock level="warning" class="m-4">
-        {{ $t('settings.confirmDeleteSpace') }}
+      <BaseMessageBlock level="warning-red" class="m-4">
+        {{ $t('settings.confirmDeleteSpace', { name: space.id }) }}
       </BaseMessageBlock>
       <div class="px-4 pb-4">
         <BaseInput
@@ -410,6 +429,12 @@ onBeforeRouteLeave(async () => {
           focus-on-mount
         >
         </BaseInput>
+        <TuneCheckbox
+          id="space-delete-acknowledge"
+          v-model="modalDeleteSpaceAcknowledge"
+          :hint="`I acknowledge that I will not be able to use ${space.id} again to create a new space.`"
+          class="mt-3"
+        />
       </div>
     </ModalConfirmAction>
     <ModalNotice

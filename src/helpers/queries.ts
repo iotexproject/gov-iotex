@@ -123,6 +123,7 @@ export const PROPOSALS_QUERY = gql`
         avatar
         symbol
         verified
+        turbo
         plugins
       }
       scores_state
@@ -384,6 +385,7 @@ export const SPACES_RANKING_QUERY = gql`
         avatar
         private
         verified
+        turbo
         categories
         rank
         activeProposals
@@ -406,6 +408,7 @@ export const SPACES_QUERY = gql`
       name
       avatar
       verified
+      turbo
       activeProposals
       followersCount
       terms
@@ -455,6 +458,7 @@ export const SPACE_QUERY = gql`
       template
       guidelines
       verified
+      turbo
       flagged
       hibernated
       parent {
@@ -509,6 +513,10 @@ export const SPACE_QUERY = gql`
         name
         address
         network
+      }
+      boost {
+        enabled
+        bribeEnabled
       }
     }
   }

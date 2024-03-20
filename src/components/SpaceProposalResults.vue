@@ -17,7 +17,19 @@ const props = defineProps<{
 
 const emit = defineEmits(['reload']);
 
-const ts = Number((Date.now() / 1e3).toFixed());
+const refreshScores = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_HUB_URL}/api/scores/${props.proposal.id}`
+    );
+
+    const result = await response.json();
+
+    if (result.result === true) {
+      emit('reload');
+    }
+  } catch (e) {}
+};
 
 const isInvalidScore = computed(
   () =>
@@ -30,21 +42,45 @@ const isPendingScore = computed(
     props.proposal?.scores_state === 'pending' &&
     props.proposal.state === 'closed'
 );
+
+onMounted(() => {
+  if (isPendingScore.value) {
+    refreshScores();
+  }
+});
 </script>
 
 <template>
-  <BaseBlock
-    :loading="!loaded"
-    :title="ts >= proposal.end ? $t('results') : $t('currentResults')"
-  >
-    <SpaceProposalResultsError
-      v-if="isInvalidScore || isPendingScore"
-      :is-admin="isAdmin"
-      :proposal="proposal"
-      :is-pending="isPendingScore"
-      :is-invalid="isInvalidScore"
-      @reload="emit('reload')"
-    />
+  <TuneBlock :loading="!loaded">
+    <template #header>
+      <TuneBlockHeader
+        :title="
+          proposal.state === 'closed' ? $t('results') : $t('currentResults')
+        "
+      />
+    </template>
+    <template v-if="isPendingScore || isInvalidScore">
+      <div v-if="isPendingScore" class="leading-5">
+        <p class="flex gap-2 text-skin-link mb-3">
+          <LoadingSpinner />
+          Finalizing results…
+        </p>
+        {{ $t('resultsCalculating') }}
+      </div>
+      <BaseMessage v-else-if="isInvalidScore" level="warning">
+        <div>{{ $t('resultsError') }}</div>
+      </BaseMessage>
+      <BaseLink
+        v-if="isAdmin"
+        link="https://discord.snapshot.org/"
+        class="mt-3 block"
+        hide-external-icon
+      >
+        <TuneButton tabindex="-1" class="w-full">
+          {{ $t('getHelp') }}
+        </TuneButton>
+      </BaseLink>
+    </template>
     <template v-else>
       <SpaceProposalResultsList
         v-if="results"
@@ -58,5 +94,5 @@ const isPendingScore = computed(
         class="pt-2"
       />
     </template>
-  </BaseBlock>
+  </TuneBlock>
 </template>

@@ -109,6 +109,7 @@ export interface Space {
   name: string;
   avatar: string;
   verified: boolean;
+  turbo: boolean;
   activeProposals: number;
   followersCount: number;
   flagged: boolean;
@@ -121,6 +122,7 @@ export interface RankedSpace {
   name: string;
   avatar: string;
   verified: boolean;
+  turbo: boolean;
   rank: number;
   categories: string[];
   activeProposals: number;
@@ -167,6 +169,11 @@ export interface ExtendedSpace {
   verified: boolean;
   flagged: boolean;
   hibernated: boolean;
+  turbo: boolean;
+  boost: {
+    enabled: boolean;
+    bribeEnabled: boolean;
+  };
   voting: {
     delay: number | null;
     hideAbstain: boolean;
@@ -200,6 +207,7 @@ export interface ProposalSpace {
   avatar: string;
   symbol: string;
   verified: boolean;
+  turbo: boolean;
 }
 
 export interface Proposal {
