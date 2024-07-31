@@ -24,10 +24,10 @@ const parentUrl =
       ]
     : document.location.href;
 const parentHost = new URL(parentUrl).host;
-if (window !== window.parent && !KNOWN_HOSTS.includes(parentHost)) {
-  document.documentElement.style.display = 'none';
-  throw new Error(`Unknown host: ${parentHost}`);
-}
+// if (window !== window.parent && !KNOWN_HOSTS.includes(parentHost)) {
+//   document.documentElement.style.display = 'none';
+//   throw new Error(`Unknown host: ${parentHost}`);
+// }
 
 const head = createHead();
 
